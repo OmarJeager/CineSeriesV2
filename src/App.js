@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Home from "./components/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
-import SeriesDetails from "./components/SeriesDetails"; // Series Details component
+import Details from "./components/Details"; // Series Details component
 import ProtectedRoute from "./ProtectedRoute"; // ProtectedRoute component
 import { auth } from "./firebase";
 import { useEffect, useState } from "react";
@@ -42,7 +42,7 @@ function App() {
         />
 
         {/* Series Details route */}
-        <Route path="/series/:id" element={<SeriesDetails />} />
+        <Route path="/details/:mediaType/:id" element={<Details />} />
 
         {/* Redirect if the user is not authenticated */}
         <Route
