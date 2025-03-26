@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle, FaSearch } from "react-icons/fa";
+import { FaUserCircle, FaSearch, FaBookmark } from "react-icons/fa";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Home.css";
 
-const Home = () => {
+const Home = ({ watchlist, setWatchlist }) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
@@ -117,6 +117,19 @@ const Home = () => {
     fetchRecentContent();
   }, []);
 
+  const addToWatchlist = (item) => {
+    console.log("Adding to watchlist:", item); // Debugging
+    setWatchlist((prevWatchlist) => {
+      // Avoid duplicates
+      if (prevWatchlist.some((watchlistItem) => watchlistItem.id === item.id)) {
+        alert("Item is already in the Watchlist!");
+        return prevWatchlist;
+      }
+      alert("Saved to Watchlist!");
+      return [...prevWatchlist, item];
+    });
+  };    
+
   return (
     <div className="home-container">
       <nav className="navbar">
@@ -192,6 +205,10 @@ const Home = () => {
             />
           </div>
 
+          <div className="watchlist-icon" onClick={() => navigate("/watchlist")}>
+            <FaBookmark size={28} title="Watchlist" />
+          </div>
+
           <div className="profile-section" onClick={() => setShowProfile(!showProfile)}>
             <FaUserCircle size={28} />
             {showProfile && (
@@ -213,34 +230,38 @@ const Home = () => {
               <div className="results-grid">
                 {suggestions.map((item) => (
                   <div
-                  key={item.id}
-                  className="result-card"
-                  onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}
+                    key={item.id}
+                    className="result-card"
+                    onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}
                   >
-                    <img
-                      src={
-                        item.poster_path
-                          ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={item.title || item.name}
-                    />
+                    <div className="image-container">
+                      <img
+                        src={
+                          item.poster_path
+                            ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
+                            : "/placeholder.jpg"
+                        }
+                        alt={item.title || item.name}
+                      />
+                      {/* Add Watchlist Icon */}
+                      <button
+                        className="watchlist-icon"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          addToWatchlist(item);
+                          alert("Saved to Watchlist!"); // Show alert
+                        }}
+                      >
+                        <FaBookmark title="Add to Watchlist" />
+                      </button>
+                    </div>
                     <div className="result-info">
                       <h3>{item.title || item.name}</h3>
-                      <p
-                        className="overview"
-                        onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}
-                        style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
-                      >
-                        Overview: {item.overview ? item.overview.substring(0, 100) + "..." : "No overview available"}
-                      </p>
                       <p>
                         {item.media_type === "movie" ? "Movie" : "TV Show"} •{" "}
-                        {item.release_date?.substring(0,4) || item.first_air_date?.substring(0,4)}
+                        {item.release_date?.substring(0, 4) || item.first_air_date?.substring(0, 4)}
                       </p>
-                      <span className="rating">
-                        ★ {item.vote_average?.toFixed(1)}
-                      </span>
+                      <span className="rating">★ {item.vote_average?.toFixed(1)}</span>
                     </div>
                   </div>
                 ))}

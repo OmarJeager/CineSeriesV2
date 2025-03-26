@@ -7,9 +7,11 @@ import DetailsPerson from "./components/DetailsPerson"; // Person Details compon
 import ProtectedRoute from "./ProtectedRoute"; // ProtectedRoute component
 import { auth } from "./firebase";
 import { useEffect, useState } from "react";
+import Watchlist from "./components/Watchlist";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [watchlist, setWatchlist] = useState([]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -18,6 +20,10 @@ function App() {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    console.log("Watchlist updated:", watchlist); // Debugging
+  }, [watchlist]);
 
   return (
     <Router>
@@ -31,7 +37,7 @@ function App() {
           element={
             isAuthenticated ? (
               <ProtectedRoute>
-                <Home />
+                <Home watchlist={watchlist} setWatchlist={setWatchlist} />
               </ProtectedRoute>
             ) : (
               <Navigate
@@ -47,6 +53,9 @@ function App() {
 
         {/* Person Details route */}
         <Route path="/details/person/:id" element={<DetailsPerson />} />
+
+        {/* Watchlist route */}
+        <Route path="/watchlist" element={<Watchlist watchlist={watchlist} />} />
 
         {/* Redirect if the user is not authenticated */}
         <Route

@@ -294,3 +294,37 @@
     transform: translateY(0);
   }
 }
+
+.watchlist-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ffcc00;
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+.watchlist-button:hover {
+  color: #ffaa00;
+}
+
+.image-container {
+  position: relative;
+}
+
+.watchlist-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #ffcc00;
+  font-size: 20px;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.watchlist-icon:hover {
+  color: #ffaa00;
+}

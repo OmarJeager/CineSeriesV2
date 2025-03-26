@@ -1,0 +1,30 @@
+.watchlist-container {
+    padding: 20px;
+  }
+  
+  .watchlist-search {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .watchlist-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .watchlist-item {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .watchlist-item h3 {
+    margin: 0;
+  }
+  
+  .watchlist-item p {
+    margin: 5px 0 0;
+  }
