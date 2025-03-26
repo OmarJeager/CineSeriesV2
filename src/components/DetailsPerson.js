@@ -6,16 +6,19 @@ import "./DetailsPerson.css";
 const DetailsPerson = () => {
   const { id } = useParams(); // Get the person ID from the URL
   const [person, setPerson] = useState(null);
+  const [credits, setCredits] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
   useEffect(() => {
     const fetchPersonDetails = async () => {
       try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/person/${id}?api_key=${API_KEY}`
-        );
-        setPerson(response.data);
+        const [personResponse, creditsResponse] = await Promise.all([
+          axios.get(`https://api.themoviedb.org/3/person/${id}?api_key=${API_KEY}`),
+          axios.get(`https://api.themoviedb.org/3/person/${id}/combined_credits?api_key=${API_KEY}`)
+        ]);
+        setPerson(personResponse.data);
+        setCredits(creditsResponse.data);
       } catch (error) {
         console.error("Error fetching person details:", error);
       } finally {
@@ -44,6 +47,7 @@ const DetailsPerson = () => {
               : "/placeholder.jpg"
           }
           alt={person.name}
+          className="person-image"
         />
         <div className="person-info">
           <h1>{person.name}</h1>
@@ -53,6 +57,32 @@ const DetailsPerson = () => {
           <p><strong>Biography:</strong> {person.biography || "No biography available."}</p>
         </div>
       </div>
+
+      {credits && (
+        <div className="person-credits">
+          <h2>Movies & TV Shows</h2>
+          <div className="credits-grid">
+            {credits.cast.map((item) => (
+              <div
+                key={item.id}
+                className="credit-card"
+                onClick={() => window.open(`/details/${item.media_type}/${item.id}`, "_blank")}
+              >
+                <img
+                  src={
+                    item.poster_path
+                      ? `https://image.tmdb.org/t/p/w200${item.poster_path}`
+                      : "/placeholder.jpg"
+                  }
+                  alt={item.title || item.name}
+                />
+                <p>{item.title || item.name}</p>
+                <p className="character">as {item.character || "N/A"}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

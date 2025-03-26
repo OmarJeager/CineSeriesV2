@@ -1,29 +1,92 @@
 .details-person {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .person-header {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .person-header img {
-    width: 300px;
-    border-radius: 10px;
-  }
-  
-  .person-info {
-    max-width: 600px;
-  }
-  
-  .person-info h1 {
-    margin-bottom: 10px;
-  }
-  
-  .person-info p {
-    margin: 5px 0;
-  }
+}
+
+.person-header {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.person-header img {
+  width: 300px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.person-header img:hover {
+  transform: scale(1.05);
+}
+
+.person-info {
+  max-width: 600px;
+}
+
+.person-info h1 {
+  margin-bottom: 10px;
+  font-size: 2rem;
+}
+
+.person-info p {
+  margin: 5px 0;
+  line-height: 1.5;
+}
+
+.person-credits {
+  margin-top: 40px;
+}
+
+.person-credits h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.credits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.credit-card {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.credit-card img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.credit-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.credit-card p {
+  margin: 10px 0 5px;
+  font-size: 1rem;
+}
+
+.credit-card .character {
+  font-size: 0.9rem;
+  color: gray;
+}
