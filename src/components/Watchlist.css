@@ -1,30 +1,146 @@
 .watchlist-container {
-    padding: 20px;
+  padding: 20px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.watchlist-search {
+  width: 50%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.watchlist-search:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.watchlist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.watchlist-item {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.watchlist-item h3 {
+  margin: 0;
+}
+
+.watchlist-item p {
+  margin: 5px 0 0;
+}
+
+.category {
+  margin-bottom: 30px;
+}
+
+.category h2 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.results-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.result-card {
+  position: relative;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.result-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.result-card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.result-info {
+  padding: 10px;
+  text-align: center;
+}
+
+.result-info h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.remove-button {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-button:hover {
+  background-color: #d9363e;
+}
+
+.remove-icon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-icon:hover {
+  background-color: rgba(255, 0, 0, 0.7);
+}
+
+.animated-card {
+  animation: slideUp 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .watchlist-search {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    font-size: 16px;
+  to {
+    opacity: 1;
   }
-  
-  .watchlist-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
   }
-  
-  .watchlist-item {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
-  
-  .watchlist-item h3 {
-    margin: 0;
-  }
-  
-  .watchlist-item p {
-    margin: 5px 0 0;
-  }
+}

@@ -11,6 +11,7 @@ const Home = ({ watchlist, setWatchlist }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(""); // New state for success message
   const [popularMovies, setPopularMovies] = useState([]);
   const [popularTVShows, setPopularTVShows] = useState([]);
   const [randomMovies, setRandomMovies] = useState([]);
@@ -97,7 +98,6 @@ const Home = ({ watchlist, setWatchlist }) => {
 
     fetchRandomContent();
   }, []);
-
   useEffect(() => {
     const fetchRecentContent = async () => {
       try {
@@ -118,7 +118,6 @@ const Home = ({ watchlist, setWatchlist }) => {
   }, []);
 
   const addToWatchlist = (item) => {
-    console.log("Adding to watchlist:", item); // Debugging
     setWatchlist((prevWatchlist) => {
       // Avoid duplicates
       if (prevWatchlist.some((watchlistItem) => watchlistItem.id === item.id)) {
@@ -128,10 +127,17 @@ const Home = ({ watchlist, setWatchlist }) => {
       alert("Saved to Watchlist!");
       return [...prevWatchlist, item];
     });
-  };    
+  };
 
   return (
     <div className="home-container">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="success-message">
+          {successMessage}
+        </div>
+      )}
+
       <nav className="navbar">
         <div className="navbar-content">
           <div className="logo" onClick={() => navigate("/")}>
