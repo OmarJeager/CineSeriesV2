@@ -16,6 +16,9 @@ const Home = () => {
   const [randomMovies, setRandomMovies] = useState([]);
   const [randomTVShows, setRandomTVShows] = useState([]);
   const [randomAnime, setRandomAnime] = useState([]);
+  const [recentMovies, setRecentMovies] = useState([]);
+  const [recentTVShows, setRecentTVShows] = useState([]);
+  const [recentPeople, setRecentPeople] = useState([]);
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
@@ -95,6 +98,25 @@ const Home = () => {
     fetchRandomContent();
   }, []);
 
+  useEffect(() => {
+    const fetchRecentContent = async () => {
+      try {
+        const [moviesResponse, tvResponse, peopleResponse] = await Promise.all([
+          axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}`),
+          axios.get(`https://api.themoviedb.org/3/tv/airing_today?api_key=${API_KEY}`),
+          axios.get(`https://api.themoviedb.org/3/person/popular?api_key=${API_KEY}`),
+        ]);
+        setRecentMovies(moviesResponse.data.results.slice(0, 5));
+        setRecentTVShows(tvResponse.data.results.slice(0, 5));
+        setRecentPeople(peopleResponse.data.results.slice(0, 5));
+      } catch (error) {
+        console.error("Error fetching recent content:", error);
+      }
+    };
+
+    fetchRecentContent();
+  }, []);
+
   return (
     <div className="home-container">
       <nav className="navbar">
@@ -104,9 +126,60 @@ const Home = () => {
           </div>
           
           <div className="nav-links">
-            <button onClick={() => navigate("/movies")}>Movies</button>
-            <button onClick={() => navigate("/tv-shows")}>TV Shows</button>
-            <button onClick={() => navigate("/people")}>People</button>
+            <div className="nav-item">
+              <button onClick={() => navigate("/movies")}>Movies</button>
+              <div className="dropdown">
+                {recentMovies.map((movie) => (
+                  <div
+                    key={movie.id}
+                    className="dropdown-item"
+                    onClick={() => navigate(`/details/movie/${movie.id}`)}
+                  >
+                    <img
+                      src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                      alt={movie.title}
+                    />
+                    <p>{movie.title}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="nav-item">
+              <button onClick={() => navigate("/tv-shows")}>TV Shows</button>
+              <div className="dropdown">
+                {recentTVShows.map((tv) => (
+                  <div
+                    key={tv.id}
+                    className="dropdown-item"
+                    onClick={() => navigate(`/details/tv/${tv.id}`)}
+                  >
+                    <img
+                      src={`https://image.tmdb.org/t/p/w200${tv.poster_path}`}
+                      alt={tv.name}
+                    />
+                    <p>{tv.name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="nav-item">
+              <button onClick={() => navigate("/people")}>People</button>
+              <div className="dropdown">
+                {recentPeople.map((person) => (
+                  <div
+                    key={person.id}
+                    className="dropdown-item"
+                    onClick={() => navigate(`/details/person/${person.id}`)}
+                  >
+                    <img
+                      src={`https://image.tmdb.org/t/p/w200${person.profile_path}`}
+                      alt={person.name}
+                    />
+                    <p>{person.name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="search-bar">
