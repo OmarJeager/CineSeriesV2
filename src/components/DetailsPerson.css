@@ -1,19 +1,38 @@
 .details-person {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   padding: 20px;
   animation: fadeIn 1s ease-in-out;
+}
+
+.person-frame {
+  background: #f8f9fa;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  max-width: 1200px;
+  width: 100%;
+  animation: slideIn 0.8s ease-in-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -49,22 +68,43 @@
   line-height: 1.5;
 }
 
-.person-credits {
+.person-movies,
+.person-tvshows,
+.person-roles {
   margin-top: 40px;
 }
 
-.person-credits h2 {
+.person-movies h2,
+.person-tvshows h2,
+.person-roles h2 {
   margin-bottom: 20px;
   font-size: 1.8rem;
 }
 
+/* Horizontal scrolling layout for movies and TV shows */
 .credits-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  display: flex;
   gap: 20px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scroll-behavior: smooth;
 }
 
+.credits-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.credits-grid::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+
+.credits-grid::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0.1);
+}
 .credit-card {
+  flex: 0 0 auto;
+  width: 150px; /* Adjust width as needed */
   text-align: center;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
