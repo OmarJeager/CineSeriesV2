@@ -3,6 +3,7 @@ import Home from "./components/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Details from "./components/Details"; // Series Details component
+import DetailsPerson from "./components/DetailsPerson"; // Person Details component
 import ProtectedRoute from "./ProtectedRoute"; // ProtectedRoute component
 import { auth } from "./firebase";
 import { useEffect, useState } from "react";
@@ -43,6 +44,9 @@ function App() {
 
         {/* Series Details route */}
         <Route path="/details/:mediaType/:id" element={<Details />} />
+
+        {/* Person Details route */}
+        <Route path="/details/person/:id" element={<DetailsPerson />} />
 
         {/* Redirect if the user is not authenticated */}
         <Route
