@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase"; // Correct import path
 import { useNavigate, Link } from "react-router-dom"; // Use Link for navigation
@@ -8,9 +8,21 @@ import "./Login.css"; // Import the CSS file for styling
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false); // State for "Remember Me"
   const [error, setError] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false); // State for dark mode
   const navigate = useNavigate();
+
+  // Load email and password from localStorage if "Remember Me" was checked
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    const savedPassword = localStorage.getItem("rememberedPassword"); // Retrieve saved password
+    if (savedEmail && savedPassword) {
+      setEmail(savedEmail);
+      setPassword(savedPassword);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,6 +30,16 @@ const Login = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+
+      // Save email and password to localStorage if "Remember Me" is checked
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", email);
+        localStorage.setItem("rememberedPassword", password); // Save password
+      } else {
+        localStorage.removeItem("rememberedEmail");
+        localStorage.removeItem("rememberedPassword"); // Remove password
+      }
+
       navigate("/home"); // Redirect to home page after successful login
     } catch (error) {
       setError(error.message); // Display error message
@@ -54,6 +76,15 @@ const Login = () => {
             className="login-input"
             required
           />
+          <div className="remember-me">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="rememberMe">Remember Me</label>
+          </div>
           <button type="submit" className="login-button">
             Login
           </button>

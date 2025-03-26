@@ -1,13 +1,240 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+}
+
+@layer components {
+  .tmdb-container {
+    @apply max-w-full p-0 m-0;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  }
+
+  .backdrop-gradient {
+    @apply bg-gradient-to-r from-tmdb-primary via-tmdb-primary/90 to-tmdb-primary/80;
+  }
+
+  .score-circle {
+    @apply relative w-16 h-16 rounded-full flex items-center justify-center;
+    background: radial-gradient(circle, rgba(3,37,65,1) 0%, rgba(1,180,228,0.5) 100%);
+    box-shadow: 0 0 10px rgba(1, 180, 228, 0.3);
+  }
+
+  .score-circle::before {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    border: 3px solid #01b4e4;
+  }
+
+  .genre-pill {
+    @apply inline-block px-3 py-1 mr-2 mb-2 rounded-full text-xs font-medium;
+    background-color: rgba(1, 180, 228, 0.1);
+    border: 1px solid rgba(1, 180, 228, 0.2);
+    color: #01b4e4;
+    transition: all 0.3s ease;
+  }
+
+  .genre-pill:hover {
+    @apply bg-tmdb-secondary/20 border-tmdb-secondary;
+    transform: translateY(-1px);
+  }
+
+  .vibe-emoji {
+    @apply w-12 h-12 text-2xl rounded-full border-2 transition-all duration-300 flex items-center justify-center;
+  }
+
+  .vibe-emoji.selected {
+    @apply border-tmdb-secondary bg-tmdb-secondary/10;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(1, 180, 228, 0.4);
+  }
+
+  .card-with-hover {
+    @apply rounded-lg overflow-hidden transition-all duration-300;
+  }
+
+  .card-with-hover:hover {
+    @apply shadow-lg;
+    transform: translateY(-5px);
+  }
+
+  .tmdb-rating-modal {
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+    background-color: rgba(3, 37, 65, 0.8);
+    backdrop-filter: blur(5px);
+  }
+  
+  .tmdb-rating-content {
+    @apply bg-white rounded-lg p-6 w-full max-w-md shadow-xl animate-scale-in;
+  }
+
+  .tmdb-back-button {
+    @apply fixed top-6 left-6 z-30 px-4 py-2 rounded-full flex items-center space-x-2 transition-all duration-300;
+    background-color: rgba(3, 37, 65, 0.7);
+    color: white;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .tmdb-back-button:hover {
+    background-color: rgba(1, 180, 228, 0.7);
+    transform: translateX(-3px);
+  }
+
+  .rating-star {
+    @apply cursor-pointer transition-all duration-300;
+    font-size: 26px;
+    color: #dbdbdb;
+  }
+  
+  .rating-star.active {
+    color: #01b4e4;
+    text-shadow: 0 0 10px rgba(1, 180, 228, 0.5);
+  }
+  
+  .rating-star:hover {
+    transform: scale(1.2);
+  }
+
+  .episode-card {
+    @apply bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300;
+  }
+  
+  .episode-card:hover {
+    @apply shadow-lg;
+    transform: translateY(-3px);
+  }
+  
+  .episode-number-badge {
+    @apply absolute top-2 left-2 px-2 py-1 text-xs rounded;
+    background-color: rgba(3, 37, 65, 0.8);
+    color: white;
+    backdrop-filter: blur(5px);
+  }
+
+  .cast-card {
+    @apply rounded-lg overflow-hidden shadow-sm bg-white transition-all duration-300;
+  }
+  
+  .cast-card:hover {
+    @apply shadow-md;
+    transform: translateY(-3px);
+  }
+
+  .keyword-chip {
+    @apply inline-block px-2 py-1 mr-1 mb-1 text-xs rounded;
+    background-color: rgba(219, 219, 219, 0.3);
+    color: #666;
+    transition: all 0.2s ease;
+  }
+  
+  .keyword-chip:hover {
+    background-color: rgba(1, 180, 228, 0.1);
+    color: #01b4e4;
+  }
+
+  .tmdb-loader {
+    @apply w-16 h-16 border-4 rounded-full animate-spin;
+    border-color: #01b4e4 transparent #01b4e4 transparent;
+  }
 }

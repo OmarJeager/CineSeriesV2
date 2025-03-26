@@ -116,3 +116,12 @@
       transform: translateY(0);
     }
   }
+  .remember-me {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .remember-me input {
+    margin-right: 5px;
+  }
