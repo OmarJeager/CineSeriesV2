@@ -187,3 +187,30 @@
   color: var(--primary-color);
   margin-bottom: 1rem;
 }
+.explore-section {
+  margin-top: 2rem;
+}
+
+.explore-section h2 {
+  margin-bottom: 1rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.result-card {
+  cursor: pointer;
+  text-align: center;
+}
+
+.result-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.result-info {
+  margin-top: 0.5rem;
+}
