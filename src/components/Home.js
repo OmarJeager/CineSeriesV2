@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle, FaSearch, FaBookmark } from "react-icons/fa";
+import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle } from "react-icons/fa";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Home.css";
 
@@ -20,6 +20,7 @@ const Home = ({ watchlist, setWatchlist }) => {
   const [recentMovies, setRecentMovies] = useState([]);
   const [recentTVShows, setRecentTVShows] = useState([]);
   const [recentPeople, setRecentPeople] = useState([]);
+  const [addToList, setAddToList] = useState([]); // State for "Add to List"
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
@@ -138,6 +139,23 @@ const Home = ({ watchlist, setWatchlist }) => {
     return watchlist.some((watchlistItem) => watchlistItem.id === item.id);
   };
 
+  const addToCustomList = (item) => {
+    setAddToList((prevList) => {
+      if (prevList.some((listItem) => listItem.id === item.id)) {
+        setSuccessMessage("Item is already in the list!");
+        return prevList;
+      }
+      setSuccessMessage("Added to List!");
+      return [...prevList, item];
+    });
+
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
+
+  const isInCustomList = (item) => {
+    return addToList.some((listItem) => listItem.id === item.id);
+  };
+
   return (
     <div className="home-container">
       {/* Success Message */}
@@ -224,6 +242,10 @@ const Home = ({ watchlist, setWatchlist }) => {
             <FaBookmark size={28} title="Watchlist" />
           </div>
 
+          <div className="add-to-list-icon" onClick={() => navigate("/add-to-list")}>
+            <FaPlusCircle size={28} title="Add to List" />
+          </div>
+
           <div className="profile-section" onClick={() => setShowProfile(!showProfile)}>
             <FaUserCircle size={28} />
             {showProfile && (
@@ -267,6 +289,16 @@ const Home = ({ watchlist, setWatchlist }) => {
                         }}
                       >
                         <FaBookmark title={isInWatchlist(item) ? "In Watchlist" : "Add to Watchlist"} />
+                      </button>
+                      {/* Add to List Icon */}
+                      <button
+                        className={`add-to-list-icon ${isInCustomList(item) ? "in-list" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCustomList(item);
+                        }}
+                      >
+                        <FaPlusCircle title={isInCustomList(item) ? "In List" : "Add to List"} />
                       </button>
                     </div>
                     <div className="result-info">

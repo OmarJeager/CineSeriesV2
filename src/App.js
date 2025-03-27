@@ -8,10 +8,12 @@ import ProtectedRoute from "./ProtectedRoute"; // ProtectedRoute component
 import { auth } from "./firebase";
 import { useEffect, useState } from "react";
 import Watchlist from "./components/Watchlist";
+import AddToList from "./components/AddToList";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [watchlist, setWatchlist] = useState([]);
+  const [addToList, setAddToList] = useState([]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -56,6 +58,12 @@ function App() {
 
         {/* Watchlist route */}
         <Route path="/watchlist" element={<Watchlist watchlist={watchlist} />} />
+
+        {/* Add to List route */}
+        <Route
+          path="/add-to-list"
+          element={<AddToList addToList={addToList} setAddToList={setAddToList} />}
+        />
 
         {/* Redirect if the user is not authenticated */}
         <Route

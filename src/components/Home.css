@@ -346,39 +346,48 @@
   color:orange;
 }
 
-/* Success message styling */
+/* Centered success message styling with bubble effect */
 .success-message {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background-color: #4caf50;
   color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px 30px;
+  border-radius: 50px; /* Rounded bubble shape */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow for bubble effect */
   font-size: 16px;
-  z-index: 9999; /* Very high z-index to ensure it's on top */
+  font-weight: bold;
+  z-index: 9999; /* Ensure it's on top */
   opacity: 0;
-  animation: fadeInOut 3s ease-in-out;
+  animation: bubbleFadeInOut 3s ease-in-out;
   pointer-events: none; /* Prevent it from blocking clicks */
+  border: 2px solid #ffffff; /* Add a white border for contrast */
+  text-align: center;
+  max-width: 80%;
+  word-wrap: break-word; /* Handle long messages */
 }
 
-/* Animation for success message */
-@keyframes fadeInOut {
+/* Animation for bubble success message */
+@keyframes bubbleFadeInOut {
   0% {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translate(-50%, -60%) scale(0.8); /* Start smaller */
   }
   10% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, -50%) scale(1.1); /* Slightly larger for pop effect */
+  }
+  20% {
+    transform: translate(-50%, -50%) scale(1); /* Normal size */
   }
   90% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, -50%) scale(1); /* Stay visible */
   }
   100% {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translate(-50%, -60%) scale(0.8); /* Shrink and fade out */
   }
 }
