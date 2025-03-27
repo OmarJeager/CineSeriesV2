@@ -7,6 +7,7 @@
   height: 100vh;
   background-color: #f5f5f5;
   transition: background-color 0.3s ease;
+  animation: fadeIn 1s ease-in-out; /* Container animation */
 }
 
 .signup-container.dark-mode {
@@ -19,7 +20,7 @@
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.5s ease-in-out;
+  animation: slideIn 1s ease-in-out; /* Form animation */
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -33,6 +34,7 @@
   flex-direction: column;
   gap: 15px;
   width: 300px;
+  animation: fadeInUp 1.2s ease-in-out; /* Form elements animation */
 }
 
 .signup-input {
@@ -41,6 +43,7 @@
   border-radius: 5px;
   font-size: 16px;
   transition: all 0.3s ease;
+  animation: fadeInUp 1.4s ease-in-out; /* Input animation */
 }
 
 .signup-input:hover {
@@ -63,6 +66,7 @@
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
+  animation: fadeInUp 1.6s ease-in-out; /* Button animation */
 }
 
 .signup-button:hover {
@@ -76,6 +80,7 @@
   right: 20px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  animation: fadeIn 1.8s ease-in-out; /* Toggle animation */
 }
 
 .dark-mode-toggle:hover {
@@ -86,6 +91,7 @@
   margin-top: 15px;
   text-align: center;
   font-size: 14px;
+  animation: fadeInUp 2s ease-in-out; /* Text animation */
 }
 
 .already-have-account a {
@@ -98,21 +104,43 @@
   color: #0056b3;
 }
 
+/* Error message animation */
+.error-message {
+  color: #ff4d4f;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  animation: fadeIn 1.5s ease-in-out; /* Error message animation */
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-/* SignUp.css */
-.error-message {
-  color: #ff4d4f;
-  text-align: center;
-  margin-bottom: 15px;
-  font-size: 14px;
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
