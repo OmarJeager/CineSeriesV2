@@ -325,8 +325,25 @@
   cursor: pointer;
 }
 
-.watchlist-icon:hover {
+/* Default watchlist button style */
+.watchlist-icon {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: gray;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+/* Highlighted watchlist button style */
+.watchlist-icon.in-watchlist {
   color: #ffaa00;
+  background-color:none; /* Tomato color for added items */
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.watchlist-icon:hover {
+  color:orange;
 }
 
 /* Success message styling */
@@ -340,9 +357,10 @@
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-size: 16px;
-  font-weight: bold;
+  z-index: 9999; /* Very high z-index to ensure it's on top */
+  opacity: 0;
   animation: fadeInOut 3s ease-in-out;
-  z-index: 1000;
+  pointer-events: none; /* Prevent it from blocking clicks */
 }
 
 /* Animation for success message */

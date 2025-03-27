@@ -97,6 +97,7 @@ const Home = ({ watchlist, setWatchlist }) => {
     };
 
     fetchRandomContent();
+    
   }, []);
   useEffect(() => {
     const fetchRecentContent = async () => {
@@ -121,12 +122,20 @@ const Home = ({ watchlist, setWatchlist }) => {
     setWatchlist((prevWatchlist) => {
       // Avoid duplicates
       if (prevWatchlist.some((watchlistItem) => watchlistItem.id === item.id)) {
-        alert("Item is already in the Watchlist!");
+        setSuccessMessage("Item is already in the Watchlist!");
         return prevWatchlist;
       }
-      alert("Saved to Watchlist!");
+      setSuccessMessage("Saved to Watchlist!");
       return [...prevWatchlist, item];
     });
+
+    // Hide the success message after 3 seconds
+    setTimeout(() => setSuccessMessage(""), 3000);
+  };
+
+  // Add a helper function to check if an item is in the watchlist
+  const isInWatchlist = (item) => {
+    return watchlist.some((watchlistItem) => watchlistItem.id === item.id);
   };
 
   return (
@@ -251,14 +260,13 @@ const Home = ({ watchlist, setWatchlist }) => {
                       />
                       {/* Add Watchlist Icon */}
                       <button
-                        className="watchlist-icon"
+                        className={`watchlist-icon ${isInWatchlist(item) ? "in-watchlist" : ""}`}
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent navigation
                           addToWatchlist(item);
-                          alert("Saved to Watchlist!"); // Show alert
                         }}
                       >
-                        <FaBookmark title="Add to Watchlist" />
+                        <FaBookmark title={isInWatchlist(item) ? "In Watchlist" : "Add to Watchlist"} />
                       </button>
                     </div>
                     <div className="result-info">
