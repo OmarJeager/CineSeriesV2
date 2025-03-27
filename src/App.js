@@ -13,7 +13,7 @@ import AddToList from "./components/AddToList";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [watchlist, setWatchlist] = useState([]);
-  const [addToList, setAddToList] = useState([]);
+  const [addToList, setAddToList] = useState([]); // Move addToList state here
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -39,7 +39,7 @@ function App() {
           element={
             isAuthenticated ? (
               <ProtectedRoute>
-                <Home watchlist={watchlist} setWatchlist={setWatchlist} />
+                <Home watchlist={watchlist} setWatchlist={setWatchlist} addToList={addToList} setAddToList={setAddToList} />
               </ProtectedRoute>
             ) : (
               <Navigate

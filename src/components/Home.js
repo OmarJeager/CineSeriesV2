@@ -5,7 +5,7 @@ import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle } from "react-icons/fa
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Home.css";
 
-const Home = ({ watchlist, setWatchlist }) => {
+const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
@@ -20,7 +20,6 @@ const Home = ({ watchlist, setWatchlist }) => {
   const [recentMovies, setRecentMovies] = useState([]);
   const [recentTVShows, setRecentTVShows] = useState([]);
   const [recentPeople, setRecentPeople] = useState([]);
-  const [addToList, setAddToList] = useState([]); // State for "Add to List"
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
