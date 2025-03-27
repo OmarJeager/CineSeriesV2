@@ -391,3 +391,36 @@
     transform: translate(-50%, -60%) scale(0.8); /* Shrink and fade out */
   }
 }
+
+/* Add media query for phone screens */
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+  }
+
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-bar {
+    max-width: 100%;
+  }
+
+  .search-bar input {
+    padding: 0.5rem 1rem;
+  }
+}
