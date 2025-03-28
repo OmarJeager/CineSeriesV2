@@ -296,7 +296,11 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
             ) : suggestions.length > 0 ? (
               <div className="results-grid">
                 {suggestions.map((item) => (
-                  <div className="result-card" onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}>
+                  <div
+                    className="result-card"
+                    onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}
+                    key={item.id}
+                  >
                     <div className="image-container">
                       <img
                         src={
@@ -340,11 +344,6 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       {ratings[item.id] && (
                         <span className="rating-number">{ratings[item.id]} ★</span>
                       )}
-                      {/* Add Star Rating */}
-                      <StarRating
-                        initialRating={ratings[item.id] || 0}
-                        onRate={(rating) => handleRating(item, rating)}
-                      />
                     </div>
                     <div className="result-info">
                       <h3>{item.title || item.name}</h3>
@@ -353,10 +352,6 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                         {item.release_date?.substring(0, 4) || item.first_air_date?.substring(0, 4)}
                       </p>
                       <span className="rating">★ {item.vote_average?.toFixed(1)}</span>
-                      {/* Display Rating */}
-                      {ratings[item.id] && (
-                        <div className="item-rating">Rated: {ratings[item.id]} ★</div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -425,11 +420,9 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
-                      {/* Display "Your Rate" and Rating Number */}
+                      {/* Display Rating Number */}
                       {ratings[movie.id] && (
-                        <span className="your-rate">
-                          Your Rate: {ratings[movie.id]} ★
-                        </span>
+                        <span className="rating-number">{ratings[movie.id]} ★</span>
                       )}
                     </div>
                     <div className="result-info">
@@ -492,20 +485,11 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       {ratings[tv.id] && (
                         <span className="rating-number">{ratings[tv.id]} ★</span>
                       )}
-                      {/* Add Star Rating */}
-                      <StarRating
-                        initialRating={ratings[tv.id] || 0}
-                        onRate={(rating) => handleRating(tv, rating)}
-                      />
+                     
                     </div>
                     <div className="result-info">
                       <h3>{tv.name}</h3>
                       <p>First Air Year: {tv.first_air_date?.substring(0, 4)}</p>
-                      <span className="rating">★ {tv.vote_average?.toFixed(1)}</span>
-                      {/* Display Rating */}
-                      {ratings[tv.id] && (
-                        <div className="item-rating">Rated: {ratings[tv.id]} ★</div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -560,11 +544,9 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
-                      {/* Display "Your Rate" and Rating Number */}
+                      {/* Display Rating Number */}
                       {ratings[movie.id] && (
-                        <span className="your-rate">
-                          Your Rate: {ratings[movie.id]} ★
-                        </span>
+                        <span className="rating-number">{ratings[movie.id]} ★</span>
                       )}
                       {/* Add Star Rating */}
                       <StarRating
@@ -574,12 +556,8 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                     </div>
                     <div className="result-info">
                       <h3>{movie.title}</h3>
-                      <p>Release Year: {movie.release_date?.substring(0, 4)}</p>
-                      <span className="rating">★ {movie.vote_average?.toFixed(1)}</span>
-                      {/* Display Rating */}
-                      {ratings[movie.id] && (
-                        <div className="item-rating">Rated: {ratings[movie.id]} ★</div>
-                      )}
+                      
+                      
                     </div>
                   </div>
                 ))}
