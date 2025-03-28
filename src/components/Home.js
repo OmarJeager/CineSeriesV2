@@ -336,6 +336,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
+                      {/* Display Rating Number */}
+                      {ratings[item.id] && (
+                        <span className="rating-number">{ratings[item.id]} ★</span>
+                      )}
                       {/* Add Star Rating */}
                       <StarRating
                         initialRating={ratings[item.id] || 0}
@@ -421,6 +425,12 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
+                      {/* Display "Your Rate" and Rating Number */}
+                      {ratings[movie.id] && (
+                        <span className="your-rate">
+                          Your Rate: {ratings[movie.id]} ★
+                        </span>
+                      )}
                     </div>
                     <div className="result-info">
                       <h3>{movie.title}</h3>
@@ -478,6 +488,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
+                      {/* Display Rating Number */}
+                      {ratings[tv.id] && (
+                        <span className="rating-number">{ratings[tv.id]} ★</span>
+                      )}
                       {/* Add Star Rating */}
                       <StarRating
                         initialRating={ratings[tv.id] || 0}
@@ -546,6 +560,12 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
+                      {/* Display "Your Rate" and Rating Number */}
+                      {ratings[movie.id] && (
+                        <span className="your-rate">
+                          Your Rate: {ratings[movie.id]} ★
+                        </span>
+                      )}
                       {/* Add Star Rating */}
                       <StarRating
                         initialRating={ratings[movie.id] || 0}
@@ -612,6 +632,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
+                      {/* Display Rating Number */}
+                      {ratings[tv.id] && (
+                        <span className="rating-number">{ratings[tv.id]} ★</span>
+                      )}
                       {/* Add Star Rating */}
                       <StarRating
                         initialRating={ratings[tv.id] || 0}
@@ -674,6 +698,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaStar title="Rate this item" />
                       </button>
+                      {/* Display Rating Number */}
+                      {ratings[anime.mal_id] && (
+                        <span className="rating-number">{ratings[anime.mal_id]} ★</span>
+                      )}
                       {/* Add Star Rating */}
                       <StarRating
                         initialRating={ratings[anime.mal_id] || 0}
