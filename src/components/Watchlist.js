@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaTrashAlt } from "react-icons/fa";
 import "./Watchlist.css";
 
-const Watchlist = ({ watchlist = [], setWatchlist }) => {
+const Watchlist = ({ watchlist, setWatchlist }) => {
+  const [message, setMessage] = useState(""); // Example state
   const [searchTerm, setSearchTerm] = useState("");
   const [internalWatchlist, setInternalWatchlist] = useState(watchlist);
   const navigate = useNavigate();
@@ -11,6 +12,18 @@ const Watchlist = ({ watchlist = [], setWatchlist }) => {
   // Use the provided setWatchlist if available, otherwise use internal state
   const actualSetWatchlist = setWatchlist || setInternalWatchlist;
   const actualWatchlist = setWatchlist ? watchlist : internalWatchlist;
+
+  useEffect(() => {
+    if (watchlist.length === 0) {
+      setMessage("Your watchlist is empty.");
+    } else {
+      setMessage("");
+    }
+  }, [watchlist]);
+
+  useEffect(() => {
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+  }, [watchlist]);
 
   // Filter watchlist based on search term
   const filteredWatchlist = actualWatchlist.filter((item) =>
@@ -36,7 +49,7 @@ const Watchlist = ({ watchlist = [], setWatchlist }) => {
   // Render category section
   const renderCategory = (items, title) => {
     if (items.length === 0) return null;
-    
+
     return (
       <div className="category">
         <h2>{title}</h2>
@@ -47,8 +60,8 @@ const Watchlist = ({ watchlist = [], setWatchlist }) => {
               className="result-card"
               onClick={() => handleCardClick(item)}
             >
-              <div 
-                className="remove-icon" 
+              <div
+                className="remove-icon"
                 onClick={(e) => handleRemove(item.id, e)}
                 aria-label={`Remove ${item.title || item.name} from watchlist`}
               >
@@ -78,6 +91,10 @@ const Watchlist = ({ watchlist = [], setWatchlist }) => {
     );
   };
 
+  if (!watchlist || watchlist.length === 0) {
+    return <div>{message}</div>;
+  }
+
   return (
     <div className="watchlist-container">
       <h1>Your Watchlist</h1>
@@ -90,7 +107,7 @@ const Watchlist = ({ watchlist = [], setWatchlist }) => {
           className="watchlist-search"
         />
       </div>
-      
+
       {filteredWatchlist.length > 0 ? (
         <>
           {renderCategory(movies, "Movies")}
@@ -100,7 +117,7 @@ const Watchlist = ({ watchlist = [], setWatchlist }) => {
       ) : (
         <div className="empty-watchlist">
           <p>No items in your watchlist.</p>
-          <button 
+          <button
             className="browse-button"
             onClick={() => navigate("/browse")}
           >

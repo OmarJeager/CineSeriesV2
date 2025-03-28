@@ -8,12 +8,18 @@ import ProtectedRoute from "./ProtectedRoute"; // ProtectedRoute component
 import { auth } from "./firebase";
 import { useEffect, useState } from "react";
 import Watchlist from "./components/Watchlist";
-import AddToList from "./components/AddToList";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [watchlist, setWatchlist] = useState([]);
-  const [addToList, setAddToList] = useState([]); // Move addToList state here
+  const [watchlist, setWatchlist] = useState(() => {
+    const savedWatchlist = localStorage.getItem("watchlist");
+    return savedWatchlist ? JSON.parse(savedWatchlist) : [];
+  });
+
+  const [addToList, setAddToList] = useState(() => {
+    const savedList = localStorage.getItem("addToList");
+    return savedList ? JSON.parse(savedList) : [];
+  });
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -27,6 +33,10 @@ function App() {
     console.log("Watchlist updated:", watchlist); // Debugging
   }, [watchlist]);
 
+  useEffect(() => {
+    localStorage.setItem("addToList", JSON.stringify(addToList));
+  }, [addToList]);
+
   return (
     <Router>
       <Routes>
@@ -39,7 +49,12 @@ function App() {
           element={
             isAuthenticated ? (
               <ProtectedRoute>
-                <Home watchlist={watchlist} setWatchlist={setWatchlist} addToList={addToList} setAddToList={setAddToList} />
+                <Home
+                  watchlist={watchlist}
+                  setWatchlist={setWatchlist}
+                  addToList={addToList} // Pass addToList as a prop
+                  setAddToList={setAddToList}
+                />
               </ProtectedRoute>
             ) : (
               <Navigate
@@ -57,13 +72,7 @@ function App() {
         <Route path="/details/person/:id" element={<DetailsPerson />} />
 
         {/* Watchlist route */}
-        <Route path="/watchlist" element={<Watchlist watchlist={watchlist} />} />
-
-        {/* Add to List route */}
-        <Route
-          path="/add-to-list"
-          element={<AddToList addToList={addToList} setAddToList={setAddToList} />}
-        />
+        <Route path="/watchlist" element={<Watchlist watchlist={watchlist} setWatchlist={setWatchlist} />} />
 
         {/* Redirect if the user is not authenticated */}
         <Route
