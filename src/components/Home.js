@@ -336,14 +336,36 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                     className="result-card"
                     onClick={() => navigate(`/details/movie/${movie.id}`)}
                   >
-                    <img
-                      src={
-                        movie.poster_path
-                          ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={movie.title}
-                    />
+                    <div className="image-container">
+                      <img
+                        src={
+                          movie.poster_path
+                            ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+                            : "/placeholder.jpg"
+                        }
+                        alt={movie.title}
+                      />
+                      {/* Add Watchlist Icon */}
+                      <button
+                        className={`watchlist-icon ${isInWatchlist(movie) ? "in-watchlist" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          addToWatchlist(movie);
+                        }}
+                      >
+                        <FaBookmark title={isInWatchlist(movie) ? "In Watchlist" : "Add to Watchlist"} />
+                      </button>
+                      {/* Add to List Icon */}
+                      <button
+                        className={`add-to-list-icon ${isInCustomList(movie) ? "in-list" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCustomList(movie);
+                        }}
+                      >
+                        <FaPlusCircle title={isInCustomList(movie) ? "In List" : "Add to List"} />
+                      </button>
+                    </div>
                     <div className="result-info">
                       <h3>{movie.title}</h3>
                       <p>Release Year: {movie.release_date?.substring(0, 4)}</p>
@@ -361,14 +383,36 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                     className="result-card"
                     onClick={() => navigate(`/details/tv/${tv.id}`)}
                   >
-                    <img
-                      src={
-                        tv.poster_path
-                          ? `https://image.tmdb.org/t/p/w300${tv.poster_path}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={tv.name}
-                    />
+                    <div className="image-container">
+                      <img
+                        src={
+                          tv.poster_path
+                            ? `https://image.tmdb.org/t/p/w300${tv.poster_path}`
+                            : "/placeholder.jpg"
+                        }
+                        alt={tv.name}
+                      />
+                      {/* Add Watchlist Icon */}
+                      <button
+                        className={`watchlist-icon ${isInWatchlist(tv) ? "in-watchlist" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          addToWatchlist(tv);
+                        }}
+                      >
+                        <FaBookmark title={isInWatchlist(tv) ? "In Watchlist" : "Add to Watchlist"} />
+                      </button>
+                      {/* Add to List Icon */}
+                      <button
+                        className={`add-to-list-icon ${isInCustomList(tv) ? "in-list" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCustomList(tv);
+                        }}
+                      >
+                        <FaPlusCircle title={isInCustomList(tv) ? "In List" : "Add to List"} />
+                      </button>
+                    </div>
                     <div className="result-info">
                       <h3>{tv.name}</h3>
                       <p>First Air Year: {tv.first_air_date?.substring(0, 4)}</p>
@@ -438,10 +482,32 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                     className="result-card"
                     onClick={() => window.open(anime.url, "_blank")}
                   >
-                    <img
-                      src={anime.images.jpg.image_url || "/placeholder.jpg"}
-                      alt={anime.title}
-                    />
+                    <div className="image-container">
+                      <img
+                        src={anime.images.jpg.image_url || "/placeholder.jpg"}
+                        alt={anime.title}
+                      />
+                      {/* Add Watchlist Icon */}
+                      <button
+                        className={`watchlist-icon ${isInWatchlist(anime) ? "in-watchlist" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          addToWatchlist(anime);
+                        }}
+                      >
+                        <FaBookmark title={isInWatchlist(anime) ? "In Watchlist" : "Add to Watchlist"} />
+                      </button>
+                      {/* Add to List Icon */}
+                      <button
+                        className={`add-to-list-icon ${isInCustomList(anime) ? "in-list" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCustomList(anime);
+                        }}
+                      >
+                        <FaPlusCircle title={isInCustomList(anime) ? "In List" : "Add to List"} />
+                      </button>
+                    </div>
                     <div className="result-info">
                       <h3>{anime.title}</h3>
                       <p>Episodes: {anime.episodes || "N/A"}</p>
