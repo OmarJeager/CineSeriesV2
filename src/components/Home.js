@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle } from "react-icons/fa";
+import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle, FaStar } from "react-icons/fa";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Home.css";
+import StarRating from "./StarRating";
 
 const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   const [query, setQuery] = useState("");
@@ -20,6 +21,9 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   const [recentMovies, setRecentMovies] = useState([]);
   const [recentTVShows, setRecentTVShows] = useState([]);
   const [recentPeople, setRecentPeople] = useState([]);
+  const [ratings, setRatings] = useState({});
+  const [selectedItem, setSelectedItem] = useState(null); // For the modal
+  const [showRatingModal, setShowRatingModal] = useState(false); // Modal visibility
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
@@ -155,12 +159,39 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
     return addToList.some((listItem) => listItem.id === item.id);
   };
 
+  const handleRating = (item, rating) => {
+    setRatings((prevRatings) => ({
+      ...prevRatings,
+      [item.id]: rating,
+    }));
+    setShowRatingModal(false); // Close the modal after rating
+  };
+
+  const openRatingModal = (item) => {
+    setSelectedItem(item);
+    setShowRatingModal(true);
+  };
+
   return (
     <div className="home-container">
       {/* Success Message */}
       {successMessage && (
         <div className="success-message">
           {successMessage}
+        </div>
+      )}
+
+      {/* Rating Modal */}
+      {showRatingModal && selectedItem && (
+        <div className="rating-modal">
+          <div className="modal-content">
+            <h3>Rate {selectedItem.title || selectedItem.name}</h3>
+            <StarRating
+              initialRating={ratings[selectedItem.id] || 0}
+              onRate={(rating) => handleRating(selectedItem, rating)}
+            />
+            <button onClick={() => setShowRatingModal(false)}>Close</button>
+          </div>
         </div>
       )}
 
@@ -265,11 +296,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
             ) : suggestions.length > 0 ? (
               <div className="results-grid">
                 {suggestions.map((item) => (
-                  <div
-                    key={item.id}
-                    className="result-card"
-                    onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}
-                  >
+                  <div className="result-card" onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}>
                     <div className="image-container">
                       <img
                         src={
@@ -299,6 +326,21 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaPlusCircle title={isInCustomList(item) ? "In List" : "Add to List"} />
                       </button>
+                      {/* Add Star Icon */}
+                      <button
+                        className="rate-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRatingModal(item);
+                        }}
+                      >
+                        <FaStar title="Rate this item" />
+                      </button>
+                      {/* Add Star Rating */}
+                      <StarRating
+                        initialRating={ratings[item.id] || 0}
+                        onRate={(rating) => handleRating(item, rating)}
+                      />
                     </div>
                     <div className="result-info">
                       <h3>{item.title || item.name}</h3>
@@ -307,6 +349,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                         {item.release_date?.substring(0, 4) || item.first_air_date?.substring(0, 4)}
                       </p>
                       <span className="rating">★ {item.vote_average?.toFixed(1)}</span>
+                      {/* Display Rating */}
+                      {ratings[item.id] && (
+                        <div className="item-rating">Rated: {ratings[item.id]} ★</div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -365,6 +411,16 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaPlusCircle title={isInCustomList(movie) ? "In List" : "Add to List"} />
                       </button>
+                      {/* Add Star Icon */}
+                      <button
+                        className="rate-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRatingModal(movie);
+                        }}
+                      >
+                        <FaStar title="Rate this item" />
+                      </button>
                     </div>
                     <div className="result-info">
                       <h3>{movie.title}</h3>
@@ -412,11 +468,30 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaPlusCircle title={isInCustomList(tv) ? "In List" : "Add to List"} />
                       </button>
+                      {/* Add Star Icon */}
+                      <button
+                        className="rate-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRatingModal(tv);
+                        }}
+                      >
+                        <FaStar title="Rate this item" />
+                      </button>
+                      {/* Add Star Rating */}
+                      <StarRating
+                        initialRating={ratings[tv.id] || 0}
+                        onRate={(rating) => handleRating(tv, rating)}
+                      />
                     </div>
                     <div className="result-info">
                       <h3>{tv.name}</h3>
                       <p>First Air Year: {tv.first_air_date?.substring(0, 4)}</p>
                       <span className="rating">★ {tv.vote_average?.toFixed(1)}</span>
+                      {/* Display Rating */}
+                      {ratings[tv.id] && (
+                        <div className="item-rating">Rated: {ratings[tv.id]} ★</div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -432,18 +507,59 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                     className="result-card"
                     onClick={() => navigate(`/details/movie/${movie.id}`)}
                   >
-                    <img
-                      src={
-                        movie.poster_path
-                          ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={movie.title}
-                    />
+                    <div className="image-container">
+                      <img
+                        src={
+                          movie.poster_path
+                            ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
+                            : "/placeholder.jpg"
+                        }
+                        alt={movie.title}
+                      />
+                      {/* Add Watchlist Icon */}
+                      <button
+                        className={`watchlist-icon ${isInWatchlist(movie) ? "in-watchlist" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          addToWatchlist(movie);
+                        }}
+                      >
+                        <FaBookmark title={isInWatchlist(movie) ? "In Watchlist" : "Add to Watchlist"} />
+                      </button>
+                      {/* Add to List Icon */}
+                      <button
+                        className={`add-to-list-icon ${isInCustomList(movie) ? "in-list" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCustomList(movie);
+                        }}
+                      >
+                        <FaPlusCircle title={isInCustomList(movie) ? "In List" : "Add to List"} />
+                      </button>
+                      {/* Add Star Icon */}
+                      <button
+                        className="rate-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRatingModal(movie);
+                        }}
+                      >
+                        <FaStar title="Rate this item" />
+                      </button>
+                      {/* Add Star Rating */}
+                      <StarRating
+                        initialRating={ratings[movie.id] || 0}
+                        onRate={(rating) => handleRating(movie, rating)}
+                      />
+                    </div>
                     <div className="result-info">
                       <h3>{movie.title}</h3>
                       <p>Release Year: {movie.release_date?.substring(0, 4)}</p>
                       <span className="rating">★ {movie.vote_average?.toFixed(1)}</span>
+                      {/* Display Rating */}
+                      {ratings[movie.id] && (
+                        <div className="item-rating">Rated: {ratings[movie.id]} ★</div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -457,18 +573,59 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                     className="result-card"
                     onClick={() => navigate(`/details/tv/${tv.id}`)}
                   >
-                    <img
-                      src={
-                        tv.poster_path
-                          ? `https://image.tmdb.org/t/p/w300${tv.poster_path}`
-                          : "/placeholder.jpg"
-                      }
-                      alt={tv.name}
-                    />
+                    <div className="image-container">
+                      <img
+                        src={
+                          tv.poster_path
+                            ? `https://image.tmdb.org/t/p/w300${tv.poster_path}`
+                            : "/placeholder.jpg"
+                        }
+                        alt={tv.name}
+                      />
+                      {/* Add Watchlist Icon */}
+                      <button
+                        className={`watchlist-icon ${isInWatchlist(tv) ? "in-watchlist" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          addToWatchlist(tv);
+                        }}
+                      >
+                        <FaBookmark title={isInWatchlist(tv) ? "In Watchlist" : "Add to Watchlist"} />
+                      </button>
+                      {/* Add to List Icon */}
+                      <button
+                        className={`add-to-list-icon ${isInCustomList(tv) ? "in-list" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCustomList(tv);
+                        }}
+                      >
+                        <FaPlusCircle title={isInCustomList(tv) ? "In List" : "Add to List"} />
+                      </button>
+                      {/* Add Star Icon */}
+                      <button
+                        className="rate-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRatingModal(tv);
+                        }}
+                      >
+                        <FaStar title="Rate this item" />
+                      </button>
+                      {/* Add Star Rating */}
+                      <StarRating
+                        initialRating={ratings[tv.id] || 0}
+                        onRate={(rating) => handleRating(tv, rating)}
+                      />
+                    </div>
                     <div className="result-info">
                       <h3>{tv.name}</h3>
                       <p>First Air Year: {tv.first_air_date?.substring(0, 4)}</p>
                       <span className="rating">★ {tv.vote_average?.toFixed(1)}</span>
+                      {/* Display Rating */}
+                      {ratings[tv.id] && (
+                        <div className="item-rating">Rated: {ratings[tv.id]} ★</div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -507,11 +664,30 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       >
                         <FaPlusCircle title={isInCustomList(anime) ? "In List" : "Add to List"} />
                       </button>
+                      {/* Add Star Icon */}
+                      <button
+                        className="rate-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRatingModal(anime);
+                        }}
+                      >
+                        <FaStar title="Rate this item" />
+                      </button>
+                      {/* Add Star Rating */}
+                      <StarRating
+                        initialRating={ratings[anime.mal_id] || 0}
+                        onRate={(rating) => handleRating(anime, rating)}
+                      />
                     </div>
                     <div className="result-info">
                       <h3>{anime.title}</h3>
                       <p>Episodes: {anime.episodes || "N/A"}</p>
                       <span className="rating">★ {anime.score?.toFixed(1)}</span>
+                      {/* Display Rating */}
+                      {ratings[anime.mal_id] && (
+                        <div className="item-rating">Rated: {ratings[anime.mal_id]} ★</div>
+                      )}
                     </div>
                   </div>
                 ))}
