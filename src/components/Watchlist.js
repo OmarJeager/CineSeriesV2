@@ -5,13 +5,34 @@ import "./Watchlist.css";
 
 const Watchlist = ({ watchlist, setWatchlist }) => {
   const [message, setMessage] = useState(""); // Example state
+  const navigate = useNavigate();
+  const [data, setData] = useState(null); // Declare hooks at the top level
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [internalWatchlist, setInternalWatchlist] = useState(watchlist);
-  const navigate = useNavigate();
 
   // Use the provided setWatchlist if available, otherwise use internal state
   const actualSetWatchlist = setWatchlist || setInternalWatchlist;
   const actualWatchlist = setWatchlist ? watchlist : internalWatchlist;
+
+  useEffect(() => {
+    if (!data) {
+      // Perform side effect conditionally
+      fetchData();
+    }
+  }, [data]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("https://api.example.com/watchlist");
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (watchlist.length === 0) {
@@ -24,6 +45,14 @@ const Watchlist = ({ watchlist, setWatchlist }) => {
   useEffect(() => {
     localStorage.setItem("watchlist", JSON.stringify(watchlist));
   }, [watchlist]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!watchlist || watchlist.length === 0) {
+    return <div>{message}</div>;
+  }
 
   // Filter watchlist based on search term
   const filteredWatchlist = actualWatchlist.filter((item) =>
@@ -90,10 +119,6 @@ const Watchlist = ({ watchlist, setWatchlist }) => {
       </div>
     );
   };
-
-  if (!watchlist || watchlist.length === 0) {
-    return <div>{message}</div>;
-  }
 
   return (
     <div className="watchlist-container">

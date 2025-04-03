@@ -8,6 +8,7 @@ import ProtectedRoute from "./ProtectedRoute"; // ProtectedRoute component
 import { auth } from "./firebase";
 import { useEffect, useState } from "react";
 import Watchlist from "./components/Watchlist";
+import AddToList from "./components/AddToList"; // AddToList component
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,6 +56,7 @@ function App() {
                   addToList={addToList} // Pass addToList as a prop
                   setAddToList={setAddToList}
                 />
+                <AddToList addToList={addToList} setAddToList={setAddToList} />
               </ProtectedRoute>
             ) : (
               <Navigate

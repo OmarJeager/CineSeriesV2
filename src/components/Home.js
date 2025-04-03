@@ -151,8 +151,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
       setSuccessMessage("Added to List!");
       return [...prevList, item];
     });
-
-    setTimeout(() => setSuccessMessage(""), 3000);
+    console.log(addToList); // Debugging
   };
 
   const isInCustomList = (item) => {
@@ -296,11 +295,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
             ) : suggestions.length > 0 ? (
               <div className="results-grid">
                 {suggestions.map((item) => (
-                  <div
-                    className="result-card"
-                    onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}
-                    key={item.id}
-                  >
+                  <div className="result-card" onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}>
                     <div className="image-container">
                       <img
                         src={
@@ -344,6 +339,11 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       {ratings[item.id] && (
                         <span className="rating-number">{ratings[item.id]} ★</span>
                       )}
+                      {/* Add Star Rating */}
+                      <StarRating
+                        initialRating={ratings[item.id] || 0}
+                        onRate={(rating) => handleRating(item, rating)}
+                      />
                     </div>
                     <div className="result-info">
                       <h3>{item.title || item.name}</h3>
@@ -352,6 +352,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                         {item.release_date?.substring(0, 4) || item.first_air_date?.substring(0, 4)}
                       </p>
                       <span className="rating">★ {item.vote_average?.toFixed(1)}</span>
+                      {/* Display Rating */}
+                      {ratings[item.id] && (
+                        <div className="item-rating">Rated: {ratings[item.id]} ★</div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -395,7 +399,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                         className={`watchlist-icon ${isInWatchlist(movie) ? "in-watchlist" : ""}`}
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent navigation
-                          addToWatchlist(movie);
+                          addToWatchlist(movie); // Add the movie to the watchlist
                         }}
                       >
                         <FaBookmark title={isInWatchlist(movie) ? "In Watchlist" : "Add to Watchlist"} />
