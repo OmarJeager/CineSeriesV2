@@ -66,13 +66,22 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
   cursor: pointer;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.result-card.removing {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none; /* Prevent interaction during animation */
 }
 
 .result-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .result-card img {
@@ -108,21 +117,41 @@
 .remove-icon {
   position: absolute;
   top: 10px;
-  left: 10px;
+  right: 10px;
   background: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: #ff4d4d;
   padding: 5px;
   border-radius: 50%;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: color 0.2s ease, background-color 0.3s ease;
 }
 
 .remove-icon:hover {
+  color: #ff0000;
   background-color: rgba(255, 0, 0, 0.7);
 }
 
 .animated-card {
   animation: slideUp 0.5s ease-in-out;
+}
+
+.empty-watchlist {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.browse-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.browse-button:hover {
+  background-color: #0056b3;
 }
 
 @keyframes fadeIn {

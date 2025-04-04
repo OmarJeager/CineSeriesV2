@@ -67,7 +67,17 @@ const Watchlist = ({ watchlist, setWatchlist }) => {
   // Remove item from watchlist
   const handleRemove = (id, e) => {
     e.stopPropagation();
-    actualSetWatchlist((prev) => prev.filter((item) => item.id !== id));
+
+    // Add 'removing' class to the item
+    const itemElement = document.getElementById(`watchlist-item-${id}`);
+    if (itemElement) {
+      itemElement.classList.add("removing");
+    }
+
+    // Wait for animation to complete before removing the item
+    setTimeout(() => {
+      actualSetWatchlist((prev) => prev.filter((item) => item.id !== id));
+    }, 300); // Match the animation duration in CSS
   };
 
   // Handle card click
@@ -85,6 +95,7 @@ const Watchlist = ({ watchlist, setWatchlist }) => {
         <div className="results-grid">
           {items.map((item) => (
             <div
+              id={`watchlist-item-${item.id}`} // Add unique ID for each item
               key={item.id}
               className="result-card"
               onClick={() => handleCardClick(item)}
@@ -139,7 +150,7 @@ const Watchlist = ({ watchlist, setWatchlist }) => {
         <div className="results-grid">
           {actualWatchlist.map((item) => (
             <div
-            
+              id={`watchlist-item-${item.id}`} // Add unique ID for each item
               key={item.id}
               className="result-card"
               onClick={() => handleCardClick(item)}
