@@ -5,6 +5,78 @@ import ReactPlayer from "react-player";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Details.css";
 
+const Comment = ({ comment, onAddReply }) => {
+  const [replyText, setReplyText] = useState("");
+  const [showReplyForm, setShowReplyForm] = useState(false);
+
+  const handleReplySubmit = () => {
+    if (replyText.trim()) {
+      onAddReply(comment.id, replyText);
+      setReplyText("");
+      setShowReplyForm(false);
+    }
+  };
+
+  return (
+    <motion.div 
+      className="comment"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="comment-header">
+        <span className="comment-author">User</span>
+        <span className="comment-rating">
+          {Array.from({ length: comment.rating }).map((_, i) => (
+            <span key={i}>★</span>
+          ))}
+        </span>
+      </div>
+      <div className="comment-text">{comment.text}</div>
+      
+      <button 
+        className="reply-btn"
+        onClick={() => setShowReplyForm(!showReplyForm)}
+      >
+        {showReplyForm ? "Cancel" : "Reply"}
+      </button>
+      
+      {showReplyForm && (
+        <div className="reply-form">
+          <textarea
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="Write your reply..."
+            rows={2}
+          />
+          <button 
+            onClick={handleReplySubmit}
+            disabled={!replyText.trim()}
+          >
+            Submit Reply
+          </button>
+        </div>
+      )}
+      
+      {comment.replies.length > 0 && (
+        <div className="replies-list">
+          {comment.replies.map((reply) => (
+            <motion.div 
+              key={reply.id}
+              className="reply"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="reply-text">{reply.text}</div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
 const Details = () => {
   const { mediaType, id } = useParams();
   const [details, setDetails] = useState(null);
@@ -17,9 +89,9 @@ const Details = () => {
   const [seasonDetails, setSeasonDetails] = useState(null);
   const [loadingSeason, setLoadingSeason] = useState(false);
   const [expandedOverview, setExpandedOverview] = useState(false);
-  const [comments, setComments] = useState([]); // Array to store comments
-  const [newComment, setNewComment] = useState(""); // For new comment input
-  const [newRating, setNewRating] = useState(0); // For new rating input
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [newRating, setNewRating] = useState(0);
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
@@ -50,13 +122,17 @@ const Details = () => {
         setVideos(videosResponse.data.results);
         setSimilar(similarResponse.data.results);
 
-        // For TV shows, fetch seasons data
         if (mediaType === "tv") {
           setSeasons(detailsResponse.data.seasons);
-          // Load first season details by default
           if (detailsResponse.data.seasons.length > 0) {
             fetchSeasonDetails(detailsResponse.data.seasons[0].season_number);
           }
+        }
+
+        // Load comments from localStorage
+        const savedComments = localStorage.getItem(`comments-${mediaType}-${id}`);
+        if (savedComments) {
+          setComments(JSON.parse(savedComments));
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -66,6 +142,11 @@ const Details = () => {
 
     fetchData();
   }, [id, mediaType, navigate]);
+
+  useEffect(() => {
+    // Save comments to localStorage whenever they change
+    localStorage.setItem(`comments-${mediaType}-${id}`, JSON.stringify(comments));
+  }, [comments, id, mediaType]);
 
   const fetchSeasonDetails = async (seasonNumber) => {
     try {
@@ -100,31 +181,36 @@ const Details = () => {
 
   const handleAddComment = () => {
     if (newComment.trim() && newRating > 0) {
-      setComments([
+      const updatedComments = [
         ...comments,
         {
           id: Date.now(),
           text: newComment,
           rating: newRating,
           replies: [],
+          timestamp: new Date().toISOString()
         },
-      ]);
+      ];
+      setComments(updatedComments);
       setNewComment("");
       setNewRating(0);
     }
   };
 
   const handleAddReply = (commentId, replyText) => {
-    setComments(
-      comments.map((comment) =>
-        comment.id === commentId
-          ? {
-              ...comment,
-              replies: [...comment.replies, { id: Date.now(), text: replyText }],
-            }
-          : comment
-      )
+    const updatedComments = comments.map((comment) =>
+      comment.id === commentId
+        ? {
+            ...comment,
+            replies: [...comment.replies, { 
+              id: Date.now(), 
+              text: replyText,
+              timestamp: new Date().toISOString()
+            }],
+          }
+        : comment
     );
+    setComments(updatedComments);
   };
 
   if (!details) return (
@@ -209,7 +295,7 @@ const Details = () => {
             <h3>Overview</h3>
             <motion.p 
               className={`overview ${expandedOverview ? "expanded" : ""}`}
-              onClick={() => setExpandedOverview(!expandedOverview)} // Only toggle expanded state
+              onClick={() => setExpandedOverview(!expandedOverview)}
               whileHover={{ color: "#f5f5f5" }}
             >
               {details.overview}
@@ -217,8 +303,8 @@ const Details = () => {
                 <span 
                   className="read-more" 
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent toggling
-                    navigate(`/details/${mediaType}/${id}`); // Navigate to details
+                    e.stopPropagation();
+                    navigate(`/details/${mediaType}/${id}`);
                   }}
                 >
                   ... Read More
@@ -440,6 +526,58 @@ const Details = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+      </motion.div>
+
+      {/* Comments Section */}
+      <motion.div 
+        className="comments-section"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.3 }}
+      >
+        <h2>Comments & Reviews</h2>
+        
+        <div className="add-comment">
+          <h3>Add Your Comment</h3>
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write your comment here..."
+            rows={4}
+          />
+          <div className="rating-input">
+            <span>Rating: </span>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={`star ${star <= newRating ? "filled" : ""}`}
+                onClick={() => setNewRating(star)}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+          <button 
+            onClick={handleAddComment}
+            disabled={!newComment.trim() || newRating === 0}
+          >
+            Submit Comment
+          </button>
+        </div>
+
+        <div className="comments-list">
+          {comments.length === 0 ? (
+            <p className="no-comments">No comments yet. Be the first to comment!</p>
+          ) : (
+            [...comments].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((comment) => (
+              <Comment 
+                key={comment.id}
+                comment={comment}
+                onAddReply={handleAddReply}
+              />
+            ))
+          )}
         </div>
       </motion.div>
     </motion.div>
