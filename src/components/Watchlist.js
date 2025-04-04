@@ -144,51 +144,13 @@ const Watchlist = ({ watchlist, setWatchlist }) => {
         />
       </div>
 
-      {/* Display all watchlist items */}
-      <div className="all-watchlist-items">
-        <h2>All Items</h2>
-        <div className="results-grid">
-          {actualWatchlist.map((item) => (
-            <div
-              id={`watchlist-item-${item.id}`} // Add unique ID for each item
-              key={item.id}
-              className="result-card"
-              onClick={() => handleCardClick(item)}
-            >
-              <div
-                className="remove-icon"
-                onClick={(e) => handleRemove(item.id, e)}
-                aria-label={`Remove ${item.title || item.name} from watchlist`}
-              >
-                <FaTrashAlt />
-              </div>
-              <img
-                src={
-                  item.poster_path
-                    ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
-                    : "/placeholder.jpg"
-                }
-                alt={item.title || item.name}
-                onError={(e) => {
-                  e.target.src = "/placeholder.jpg";
-                }}
-              />
-              <div className="result-info">
-                <h3>{item.title || item.name}</h3>
-                {item.release_date && (
-                  <p>{new Date(item.release_date).getFullYear()}</p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
+      {/* Display filtered categories */}
       {filteredWatchlist.length > 0 ? (
         <>
           {renderCategory(movies, "Movies")}
-          {renderCategory(series, "TV Series")}
+          {renderCategory(series, "TV Shows")}
           {renderCategory(anime, "Anime")}
+          {renderCategory(filteredWatchlist, "All Items")}
         </>
       ) : (
         <div className="empty-watchlist">
