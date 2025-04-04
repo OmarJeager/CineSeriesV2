@@ -286,3 +286,75 @@
 .overview.expanded {
   max-height: none;
 }
+
+/* Comments Section */
+.comments-section {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.add-comment, .add-reply {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.add-comment textarea, .add-reply textarea {
+  resize: none;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-comment input {
+  width: 100px;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.add-comment button, .add-reply button {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-comment button:hover, .add-reply button:hover {
+  background-color: #0056b3;
+}
+
+.comments-list {
+  margin-top: 1rem;
+}
+
+.comment {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.comment-content {
+  margin-bottom: 0.5rem;
+}
+
+.replies {
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+}
+
+.reply {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+}

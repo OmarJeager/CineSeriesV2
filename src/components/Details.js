@@ -17,6 +17,9 @@ const Details = () => {
   const [seasonDetails, setSeasonDetails] = useState(null);
   const [loadingSeason, setLoadingSeason] = useState(false);
   const [expandedOverview, setExpandedOverview] = useState(false);
+  const [comments, setComments] = useState([]); // Array to store comments
+  const [newComment, setNewComment] = useState(""); // For new comment input
+  const [newRating, setNewRating] = useState(0); // For new rating input
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
@@ -93,6 +96,35 @@ const Details = () => {
 
   const toggleOverview = () => {
     setExpandedOverview(!expandedOverview);
+  };
+
+  const handleAddComment = () => {
+    if (newComment.trim() && newRating > 0) {
+      setComments([
+        ...comments,
+        {
+          id: Date.now(),
+          text: newComment,
+          rating: newRating,
+          replies: [],
+        },
+      ]);
+      setNewComment("");
+      setNewRating(0);
+    }
+  };
+
+  const handleAddReply = (commentId, replyText) => {
+    setComments(
+      comments.map((comment) =>
+        comment.id === commentId
+          ? {
+              ...comment,
+              replies: [...comment.replies, { id: Date.now(), text: replyText }],
+            }
+          : comment
+      )
+    );
   };
 
   if (!details) return (

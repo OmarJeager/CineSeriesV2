@@ -9,6 +9,7 @@ import { auth } from "./firebase";
 import { useEffect, useState } from "react";
 import Watchlist from "./components/Watchlist";
 import AddToList from "./components/AddToList"; // AddToList component
+import AddToListPage from "./components/AddToList"; // Import the new page
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,6 +38,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem("addToList", JSON.stringify(addToList));
   }, [addToList]);
+
+  useEffect(() => {
+    localStorage.setItem("watchlist", JSON.stringify(watchlist));
+  }, [watchlist]);
 
   return (
     <Router>
@@ -75,6 +80,9 @@ function App() {
 
         {/* Watchlist route */}
         <Route path="/watchlist" element={<Watchlist watchlist={watchlist} setWatchlist={setWatchlist} />} />
+
+        {/* AddToListPage route */}
+        <Route path="/add-to-list" element={<AddToListPage />} /> {/* Add this */}
 
         {/* Redirect if the user is not authenticated */}
         <Route

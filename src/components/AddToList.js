@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AddToList.css";
 
-const AddToList = ({ addToList, setAddToList }) => {
+const AddToList = ({ addToList = [], setAddToList }) => { // Default value for addToList
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
 

@@ -11,13 +11,16 @@
   padding: 0;
 }
 
+/* Add fade-in animation for the home container */
 .home-container {
   background-color: var(--secondary-color);
   min-height: 100vh;
   color: var(--light-color);
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  animation: fadeIn 1s ease-in-out;
 }
 
+/* Navbar slide-in animation */
 .navbar {
   background-color: var(--dark-color);
   padding: 1rem 2rem;
@@ -26,6 +29,7 @@
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  animation: slideDown 0.8s ease-in-out;
 }
 
 .navbar-content {
@@ -36,30 +40,36 @@
   gap: 2rem;
 }
 
+/* Add bounce effect to the logo */
 .logo {
   color: var(--primary-color);
   font-size: 1.8rem;
   font-weight: bold;
   cursor: pointer;
+  animation: bounce 2s infinite;
 }
 
+/* Smooth hover effect for buttons */
 .nav-links {
   display: flex; /* Arrange items horizontally */
   gap: 2rem; /* Add spacing between navigation items */
 }
 
-.nav-links button {
+.nav-links button,
+.nav-item button {
   background: none;
   border: none;
   color: var(--light-color);
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-size: 1rem;
-  transition: color 0.3s;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.nav-links button:hover {
+.nav-links button:hover,
+.nav-item button:hover {
   color: var(--primary-color);
+  transform: scale(1.1);
 }
 
 .search-bar {
@@ -122,9 +132,11 @@
   margin: 0 auto;
 }
 
+/* Add fade-in animation for hero section */
 .hero-section {
   text-align: center;
   padding: 4rem 2rem;
+  animation: fadeIn 1.5s ease-in-out;
 }
 
 .hero-section h1 {
@@ -132,23 +144,27 @@
   margin-bottom: 1rem;
 }
 
+/* Add fade-in animation for the results grid */
 .results-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 2rem;
   padding: 2rem;
+  animation: fadeIn 1s ease-in-out;
 }
 
+/* Add hover animation for result cards */
 .result-card {
   background: var(--dark-color);
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .result-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
 
 .result-card img {
@@ -230,11 +246,12 @@
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-size: 1rem;
-  transition: color 0.3s;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .nav-item button:hover {
   color: var(--primary-color);
+  transform: scale(1.1);
 }
 
 .nav-item .dropdown {
@@ -261,13 +278,13 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out, background-color 0.2s;
+  transition: transform 0.3s ease, background-color 0.3s ease;
   padding: 0.5rem;
   border-radius: 4px;
 }
 
 .dropdown-item:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.05);
   background-color: var(--primary-color);
 }
 
@@ -282,6 +299,37 @@
   color: var(--light-color);
   font-size: 0.9rem;
   margin: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes fadeIn {
@@ -331,7 +379,12 @@
   border: none;
   cursor: pointer;
   color: gray;
-  transition: color 0.3s, background-color 0.3s;
+  transition: color 0.3s ease, background-color 0.3s, transform 0.3s ease;
+}
+
+.watchlist-icon:hover {
+  color:orange;
+  transform: scale(1.2);
 }
 
 /* Highlighted watchlist button style */
@@ -340,10 +393,6 @@
   background-color:none; /* Tomato color for added items */
   border-radius: 50%;
   padding: 5px;
-}
-
-.watchlist-icon:hover {
-  color:orange;
 }
 
 /* Centered success message styling with bubble effect */
@@ -392,6 +441,7 @@
   }
 }
 
+/* Add hover effect for rating icons */
 .rate-icon {
   background: none;
   border: none;
@@ -401,6 +451,12 @@
   margin-top: 5px;
   display: flex;
   align-items: center;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.rate-icon:hover {
+  transform: scale(1.2);
+  color: #ffcc00;
 }
 
 .item-rating {
@@ -507,4 +563,96 @@
   .search-bar input {
     padding: 0.5rem 1rem;
   }
+}
+
+/* Navigation Menu Styling */
+.navbar .nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar .nav-item {
+  position: relative;
+}
+
+.navbar .nav-item button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 10px 15px;
+  transition: color 0.3s ease;
+}
+
+.navbar .nav-item button:hover {
+  color: #ffcc00; /* Highlight color on hover */
+}
+
+.navbar .dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #222;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.navbar .nav-item:hover .dropdown {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.navbar .dropdown-item {
+  display: flex;
+  align-items: flex-start; /* Align items at the top */
+  gap: 15px; /* Increase spacing between elements */
+  padding: 10px;
+  background-color: #333;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 300px; /* Increase width for more details */
+}
+
+.navbar .dropdown-item:hover {
+  background-color: #444;
+}
+
+.navbar .dropdown-item img {
+  width: 60px; /* Slightly larger image */
+  height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.navbar .dropdown-item .details {
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+.navbar .dropdown-item .details p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.navbar .dropdown-item .details .title {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.navbar .dropdown-item .details .description {
+  font-size: 12px;
+  color: #ccc;
 }
