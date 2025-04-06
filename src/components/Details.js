@@ -3,9 +3,23 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactPlayer from "react-player";
 import { motion, AnimatePresence } from "framer-motion";
+import { 
+  collection, 
+  addDoc, 
+  query, 
+  where, 
+  onSnapshot, 
+  serverTimestamp,
+  doc,
+  updateDoc,
+  arrayUnion,
+  orderBy
+} from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, firestore } from "../firebase";
 import "./Details.css";
 
-const Comment = ({ comment, onAddReply }) => {
+const Comment = ({ comment, onAddReply, currentUser }) => {
   const [replyText, setReplyText] = useState("");
   const [showReplyForm, setShowReplyForm] = useState(false);
 
@@ -17,6 +31,11 @@ const Comment = ({ comment, onAddReply }) => {
     }
   };
 
+  const formatDate = (timestamp) => {
+    if (!timestamp?.toDate) return "Just now";
+    return timestamp.toDate().toLocaleString();
+  };
+
   return (
     <motion.div 
       className="comment"
@@ -25,21 +44,26 @@ const Comment = ({ comment, onAddReply }) => {
       transition={{ duration: 0.3 }}
     >
       <div className="comment-header">
-        <span className="comment-author">User</span>
-        <span className="comment-rating">
+        <div className="comment-user-info">
+          <span className="comment-author">{comment.userName}</span>
+          <span className="comment-time">{formatDate(comment.createdAt)}</span>
+        </div>
+        <div className="comment-rating">
           {Array.from({ length: comment.rating }).map((_, i) => (
             <span key={i}>★</span>
           ))}
-        </span>
+        </div>
       </div>
       <div className="comment-text">{comment.text}</div>
       
-      <button 
-        className="reply-btn"
-        onClick={() => setShowReplyForm(!showReplyForm)}
-      >
-        {showReplyForm ? "Cancel" : "Reply"}
-      </button>
+      {currentUser && (
+        <button 
+          className="reply-btn"
+          onClick={() => setShowReplyForm(!showReplyForm)}
+        >
+          {showReplyForm ? "Cancel" : "Reply"}
+        </button>
+      )}
       
       {showReplyForm && (
         <div className="reply-form">
@@ -58,16 +82,20 @@ const Comment = ({ comment, onAddReply }) => {
         </div>
       )}
       
-      {comment.replies.length > 0 && (
+      {comment.replies?.length > 0 && (
         <div className="replies-list">
-          {comment.replies.map((reply) => (
+          {comment.replies.map((reply, index) => (
             <motion.div 
-              key={reply.id}
+              key={index}
               className="reply"
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.2 }}
             >
+              <div className="reply-user-info">
+                <span className="reply-author">{reply.userName}</span>
+                <span className="reply-time">{formatDate(reply.createdAt)}</span>
+              </div>
               <div className="reply-text">{reply.text}</div>
             </motion.div>
           ))}
@@ -92,27 +120,36 @@ const Details = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [newRating, setNewRating] = useState(0);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loadingComments, setLoadingComments] = useState(true);
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
+  // Track authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch media details and comments
   useEffect(() => {
     const fetchData = async () => {
       try {
         setDetails(null);
         setSeasonDetails(null);
         
+        // Fetch media details
         const detailsResponse = await axios.get(
           `https://api.themoviedb.org/3/${mediaType}/${id}?api_key=${API_KEY}`
         );
-
         const creditsResponse = await axios.get(
           `https://api.themoviedb.org/3/${mediaType}/${id}/credits?api_key=${API_KEY}`
         );
-
         const videosResponse = await axios.get(
           `https://api.themoviedb.org/3/${mediaType}/${id}/videos?api_key=${API_KEY}`
         );
-
         const similarResponse = await axios.get(
           `https://api.themoviedb.org/3/${mediaType}/${id}/similar?api_key=${API_KEY}`
         );
@@ -122,6 +159,7 @@ const Details = () => {
         setVideos(videosResponse.data.results);
         setSimilar(similarResponse.data.results);
 
+        // For TV shows
         if (mediaType === "tv") {
           setSeasons(detailsResponse.data.seasons);
           if (detailsResponse.data.seasons.length > 0) {
@@ -129,11 +167,30 @@ const Details = () => {
           }
         }
 
-        // Load comments from localStorage
-        const savedComments = localStorage.getItem(`comments-${mediaType}-${id}`);
-        if (savedComments) {
-          setComments(JSON.parse(savedComments));
-        }
+        // Set up Firestore comments listener
+        const q = query(
+          collection(firestore, 'comments'),
+          where('mediaId', '==', id),
+          where('mediaType', '==', mediaType),
+          orderBy('createdAt', 'desc')
+        );
+
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const loadedComments = [];
+          querySnapshot.forEach((doc) => {
+            loadedComments.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+          setComments(loadedComments);
+          setLoadingComments(false);
+        }, (error) => {
+          console.error("Error loading comments:", error);
+          setLoadingComments(false);
+        });
+
+        return unsubscribe;
       } catch (error) {
         console.error("Error fetching data:", error);
         navigate("/");
@@ -142,11 +199,6 @@ const Details = () => {
 
     fetchData();
   }, [id, mediaType, navigate]);
-
-  useEffect(() => {
-    // Save comments to localStorage whenever they change
-    localStorage.setItem(`comments-${mediaType}-${id}`, JSON.stringify(comments));
-  }, [comments, id, mediaType]);
 
   const fetchSeasonDetails = async (seasonNumber) => {
     try {
@@ -179,38 +231,58 @@ const Details = () => {
     setExpandedOverview(!expandedOverview);
   };
 
-  const handleAddComment = () => {
-    if (newComment.trim() && newRating > 0) {
-      const updatedComments = [
-        ...comments,
-        {
-          id: Date.now(),
-          text: newComment,
-          rating: newRating,
-          replies: [],
-          timestamp: new Date().toISOString()
-        },
-      ];
-      setComments(updatedComments);
+  const handleAddComment = async () => {
+    if (!currentUser) {
+      alert("Please sign in to comment");
+      return;
+    }
+    
+    if (!newComment.trim() || newRating === 0) {
+      alert("Please enter a comment and rating");
+      return;
+    }
+
+    try {
+      await addDoc(collection(firestore, 'comments'), {
+        text: newComment,
+        rating: newRating,
+        mediaId: id,
+        mediaType: mediaType,
+        userId: currentUser.uid,
+        userEmail: currentUser.email,
+        userName: currentUser.displayName || currentUser.email.split('@')[0],
+        createdAt: serverTimestamp(),
+        replies: []
+      });
       setNewComment("");
       setNewRating(0);
+    } catch (error) {
+      console.error("Error adding comment:", error);
+      alert("Failed to add comment. Please try again.");
     }
   };
 
-  const handleAddReply = (commentId, replyText) => {
-    const updatedComments = comments.map((comment) =>
-      comment.id === commentId
-        ? {
-            ...comment,
-            replies: [...comment.replies, { 
-              id: Date.now(), 
-              text: replyText,
-              timestamp: new Date().toISOString()
-            }],
-          }
-        : comment
-    );
-    setComments(updatedComments);
+  const handleAddReply = async (commentId, replyText) => {
+    if (!currentUser) {
+      alert("Please sign in to reply");
+      return;
+    }
+
+    try {
+      const commentRef = doc(firestore, 'comments', commentId);
+      await updateDoc(commentRef, {
+        replies: arrayUnion({
+          text: replyText,
+          userId: currentUser.uid,
+          userEmail: currentUser.email,
+          userName: currentUser.displayName || currentUser.email.split('@')[0],
+          createdAt: serverTimestamp()
+        })
+      });
+    } catch (error) {
+      console.error("Error adding reply:", error);
+      alert("Failed to add reply. Please try again.");
+    }
   };
 
   if (!details) return (
@@ -304,7 +376,7 @@ const Details = () => {
                   className="read-more" 
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate(`/details/${mediaType}/${id}`);
+                    setExpandedOverview(true); // Fix: Expand the overview
                   }}
                 >
                   ... Read More
@@ -538,43 +610,56 @@ const Details = () => {
       >
         <h2>Comments & Reviews</h2>
         
-        <div className="add-comment">
-          <h3>Add Your Comment</h3>
-          <textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Write your comment here..."
-            rows={4}
-          />
-          <div className="rating-input">
-            <span>Rating: </span>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                className={`star ${star <= newRating ? "filled" : ""}`}
-                onClick={() => setNewRating(star)}
-              >
-                ★
-              </span>
-            ))}
+        {!currentUser ? (
+          <div className="auth-prompt">
+            <p>Please sign in to leave comments and reviews</p>
+            <button onClick={() => navigate('/login')}>Sign In</button>
           </div>
-          <button 
-            onClick={handleAddComment}
-            disabled={!newComment.trim() || newRating === 0}
-          >
-            Submit Comment
-          </button>
-        </div>
+        ) : (
+          <div className="add-comment">
+            <h3>Add Your Comment</h3>
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write your comment here..."
+              rows={4}
+            />
+            <div className="rating-input">
+              <span>Rating: </span>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${star <= newRating ? "filled" : ""}`}
+                  onClick={() => setNewRating(star)}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <button 
+              onClick={handleAddComment}
+              disabled={!newComment.trim() || newRating === 0}
+            >
+              Submit Comment
+            </button>
+          </div>
+        )}
 
         <div className="comments-list">
-          {comments.length === 0 ? (
+          {loadingComments ? (
+            <div className="loading-comments">
+              <div className="spinner"></div>
+              Loading comments...
+            </div>
+          ) : comments.length === 0 ? (
             <p className="no-comments">No comments yet. Be the first to comment!</p>
           ) : (
-            [...comments].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((comment) => (
+            comments.map((comment) => (
               <Comment 
                 key={comment.id}
                 comment={comment}
                 onAddReply={handleAddReply}
+                currentUser={currentUser}
               />
             ))
           )}

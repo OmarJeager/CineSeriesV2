@@ -4,7 +4,6 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from 'firebase/firestore'; // Import Firestore function
 import { getStorage } from "firebase/storage";
-
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAVhy2TSEJq8eYTouNwDeOI8oW33xkUrcI",

@@ -179,7 +179,6 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
           {successMessage}
         </div>
       )}
-
       {/* Rating Modal */}
       {showRatingModal && selectedItem && (
         <div className="rating-modal">
