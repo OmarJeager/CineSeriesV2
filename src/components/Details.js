@@ -17,7 +17,10 @@ import {
 } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, firestore } from "../firebase";
+import { getDatabase, ref, push, onValue, serverTimestamp as rtdbServerTimestamp, update } from "firebase/database";
 import "./Details.css";
+
+const database = getDatabase();
 
 const Comment = ({ comment, onAddReply, currentUser }) => {
   const [replyText, setReplyText] = useState("");
@@ -82,25 +85,21 @@ const Comment = ({ comment, onAddReply, currentUser }) => {
         </div>
       )}
       
-      {comment.replies?.length > 0 && (
-        <div className="replies-list">
-          {comment.replies.map((reply, index) => (
-            <motion.div 
-              key={index}
-              className="reply"
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="reply-user-info">
-                <span className="reply-author">{reply.userName}</span>
-                <span className="reply-time">{formatDate(reply.createdAt)}</span>
-              </div>
-              <div className="reply-text">{reply.text}</div>
-            </motion.div>
-          ))}
-        </div>
-      )}
+      {comment.replies && Object.values(comment.replies).map((reply, index) => (
+        <motion.div 
+          key={index}
+          className="reply"
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="reply-user-info">
+            <span className="reply-author">{reply.userName}</span>
+            <span className="reply-time">{formatDate(reply.createdAt)}</span>
+          </div>
+          <div className="reply-text">{reply.text}</div>
+        </motion.div>
+      ))}
     </motion.div>
   );
 };
@@ -178,6 +177,7 @@ const Details = () => {
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const loadedComments = [];
           querySnapshot.forEach((doc) => {
+            console.log(doc.data()); // Log each comment
             loadedComments.push({
               id: doc.id,
               ...doc.data()
@@ -199,6 +199,49 @@ const Details = () => {
 
     fetchData();
   }, [id, mediaType, navigate]);
+
+  useEffect(() => {
+    const q = query(
+      collection(firestore, 'comments'),
+      where('mediaId', '==', id),
+      where('mediaType', '==', mediaType),
+      orderBy('createdAt', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const loadedComments = [];
+      querySnapshot.forEach((doc) => {
+        loadedComments.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      setComments(loadedComments);
+      setLoadingComments(false);
+    });
+
+    return () => unsubscribe();
+  }, [id, mediaType]);
+
+  useEffect(() => {
+    const commentsRef = ref(database, 'comments');
+    const unsubscribe = onValue(commentsRef, (snapshot) => {
+      const data = snapshot.val();
+      const loadedComments = [];
+      for (const key in data) {
+        if (data[key].mediaId === id && data[key].mediaType === mediaType) {
+          loadedComments.push({
+            id: key,
+            ...data[key]
+          });
+        }
+      }
+      setComments(loadedComments.reverse());
+      setLoadingComments(false);
+    });
+
+    return () => unsubscribe();
+  }, [id, mediaType]);
 
   const fetchSeasonDetails = async (seasonNumber) => {
     try {
@@ -233,25 +276,21 @@ const Details = () => {
 
   const handleAddComment = async () => {
     if (!currentUser) {
-      alert("Please sign in to comment");
-      return;
-    }
-    
-    if (!newComment.trim() || newRating === 0) {
-      alert("Please enter a comment and rating");
+      alert("Please sign in to add a comment");
       return;
     }
 
     try {
-      await addDoc(collection(firestore, 'comments'), {
-        text: newComment,
-        rating: newRating,
+      const commentsRef = ref(database, 'comments');
+      await push(commentsRef, {
         mediaId: id,
         mediaType: mediaType,
+        text: newComment,
+        rating: newRating,
         userId: currentUser.uid,
         userEmail: currentUser.email,
         userName: currentUser.displayName || currentUser.email.split('@')[0],
-        createdAt: serverTimestamp(),
+        createdAt: rtdbServerTimestamp(),
         replies: []
       });
       setNewComment("");
@@ -269,15 +308,13 @@ const Details = () => {
     }
 
     try {
-      const commentRef = doc(firestore, 'comments', commentId);
-      await updateDoc(commentRef, {
-        replies: arrayUnion({
-          text: replyText,
-          userId: currentUser.uid,
-          userEmail: currentUser.email,
-          userName: currentUser.displayName || currentUser.email.split('@')[0],
-          createdAt: serverTimestamp()
-        })
+      const commentRef = ref(database, `comments/${commentId}/replies`);
+      await push(commentRef, {
+        text: replyText,
+        userId: currentUser.uid,
+        userEmail: currentUser.email,
+        userName: currentUser.displayName || currentUser.email.split('@')[0],
+        createdAt: rtdbServerTimestamp()
       });
     } catch (error) {
       console.error("Error adding reply:", error);
