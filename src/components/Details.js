@@ -17,8 +17,13 @@ import {
 } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, firestore } from "../firebase";
-import { getDatabase, ref, push, onValue, serverTimestamp as rtdbServerTimestamp, update } from "firebase/database";
+import { getDatabase, ref, push, onValue, serverTimestamp as rtdbServerTimestamp, update, remove } from "firebase/database";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Details.css";
+import Modal from "react-modal"; // Install react-modal if not already installed
+
+Modal.setAppElement("#root"); // Set the root element for accessibility
 
 const database = getDatabase();
 
@@ -27,6 +32,8 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(comment.text);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [showAllReactions, setShowAllReactions] = useState(false);
 
   const handleReplySubmit = () => {
     if (replyText.trim()) {
@@ -43,19 +50,48 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
     }
   };
 
-  const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this comment?")) {
-      onDeleteComment(comment.id);
-    }
+  const openDeleteModal = () => {
+    setIsDeleteModalOpen(true);
   };
 
-  const handleReact = () => {
-    onReactToComment(comment.id);
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
+  const confirmDelete = () => {
+    onDeleteComment(comment.id);
+    closeDeleteModal();
+  };
+
+  const handleReact = (emoji) => {
+    onReactToComment(comment.id, emoji);
   };
 
   const formatDate = (timestamp) => {
     if (!timestamp?.toDate) return "Just now";
     return timestamp.toDate().toLocaleString();
+  };
+
+  const renderReactions = () => {
+    const reactions = comment.reactions || {};
+    const sortedReactions = Object.entries(reactions).sort((a, b) => b[1] - a[1]);
+    const displayedReactions = showAllReactions ? sortedReactions : sortedReactions.slice(0, 3);
+
+    return (
+      <div className="reactions">
+        {displayedReactions.map(([emoji, count]) => (
+          <span key={emoji} className="reaction">
+            {emoji} {count}
+          </span>
+        ))}
+        {sortedReactions.length > 3 && (
+          <button onClick={() => setShowAllReactions(!showAllReactions)} className="show-more-btn">
+            {showAllReactions ? "Show Less" : "Show More"
+            }
+          </button>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -94,6 +130,18 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
         <div className="comment-text">{comment.text}</div>
       )}
 
+      {renderReactions()}
+
+      {currentUser && (
+        <div className="reaction-buttons">
+          {["👍", "❤️", "😂", "😮", "😢", "👏"].map((emoji) => (
+            <button key={emoji} onClick={() => handleReact(emoji)} className="emoji-btn">
+              {emoji}
+            </button>
+          ))}
+        </div>
+      )}
+
       {currentUser && (
         <div className="comment-actions">
           <button onClick={handleReact}>
@@ -102,7 +150,7 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
           {currentUser.uid === comment.userId && (
             <>
               <button onClick={() => setIsEditing(true)}>Edit</button>
-              <button onClick={handleDelete}>Delete</button>
+              <button onClick={openDeleteModal}>Delete</button>
             </>
           )}
           <button onClick={() => setShowReplyForm(!showReplyForm)}>
@@ -143,6 +191,21 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
           <div className="reply-text">{reply.text}</div>
         </motion.div>
       ))}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onRequestClose={closeDeleteModal}
+        className="delete-modal"
+        overlayClassName="delete-modal-overlay"
+      >
+        <h2>Are you sure you want to delete this comment?</h2>
+        <p>{comment.text}</p>
+        <div className="modal-actions">
+          <button onClick={confirmDelete} className="delete-btn">Delete</button>
+          <button onClick={closeDeleteModal} className="cancel-btn">Cancel</button>
+        </div>
+      </Modal>
     </motion.div>
   );
 };
@@ -378,17 +441,46 @@ const Details = () => {
   const handleDeleteComment = async (commentId) => {
     try {
       const commentRef = ref(database, `comments/${commentId}`);
-      await update(commentRef, null); // Deletes the comment
+      await remove(commentRef); // Use remove() to delete the comment
+
+      // Update the comments state
+      setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
+
+      // Show a success toast notification
+      toast.success("Comment deleted successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } catch (error) {
       console.error("Error deleting comment:", error);
-      alert("Failed to delete comment. Please try again.");
+
+      // Show an error toast notification
+      toast.error("Failed to delete comment. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
-  const handleReactToComment = async (commentId) => {
+  const handleReactToComment = async (commentId, emoji) => {
+    if (!currentUser) {
+      alert("Please sign in to react to comments");
+      return;
+    }
+
     try {
-      const commentRef = ref(database, `comments/${commentId}/reactions`);
-      await update(commentRef, (prevReactions) => (prevReactions || 0) + 1);
+      const commentRef = ref(database, `comments/${commentId}/reactions/${emoji}`);
+      await update(commentRef, (prevCount) => (prevCount || 0) + 1);
     } catch (error) {
       console.error("Error reacting to comment:", error);
       alert("Failed to react to comment. Please try again.");

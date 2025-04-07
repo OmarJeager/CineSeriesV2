@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Watchlist from "./components/Watchlist";
 import AddToList from "./components/AddToList"; // AddToList component
 import AddToListPage from "./components/AddToList"; // Import the new page
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -44,62 +45,65 @@ function App() {
   }, [watchlist]);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
+    <>
+      <ToastContainer />
+      <Router>
+        <Routes>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
 
-        {/* Protected Route for Home */}
-        <Route
-          path="/home"
-          element={
-            isAuthenticated ? (
-              <ProtectedRoute>
-                <Home
-                  watchlist={watchlist}
-                  setWatchlist={setWatchlist}
-                  addToList={addToList} // Pass addToList as a prop
-                  setAddToList={setAddToList}
+          {/* Protected Route for Home */}
+          <Route
+            path="/home"
+            element={
+              isAuthenticated ? (
+                <ProtectedRoute>
+                  <Home
+                    watchlist={watchlist}
+                    setWatchlist={setWatchlist}
+                    addToList={addToList} // Pass addToList as a prop
+                    setAddToList={setAddToList}
+                  />
+                  <AddToList addToList={addToList} setAddToList={setAddToList} />
+                </ProtectedRoute>
+              ) : (
+                <Navigate
+                  to="/signup"
+                  state={{ error: "You must sign up to access this page." }}
                 />
-                <AddToList addToList={addToList} setAddToList={setAddToList} />
-              </ProtectedRoute>
-            ) : (
-              <Navigate
-                to="/signup"
-                state={{ error: "You must sign up to access this page." }}
-              />
-            )
-          }
-        />
+              )
+            }
+          />
 
-        {/* Series Details route */}
-        <Route path="/details/:mediaType/:id" element={<Details />} />
+          {/* Series Details route */}
+          <Route path="/details/:mediaType/:id" element={<Details />} />
 
-        {/* Person Details route */}
-        <Route path="/details/person/:id" element={<DetailsPerson />} />
+          {/* Person Details route */}
+          <Route path="/details/person/:id" element={<DetailsPerson />} />
 
-        {/* Watchlist route */}
-        <Route path="/watchlist" element={<Watchlist watchlist={watchlist} setWatchlist={setWatchlist} />} />
+          {/* Watchlist route */}
+          <Route path="/watchlist" element={<Watchlist watchlist={watchlist} setWatchlist={setWatchlist} />} />
 
-        {/* AddToListPage route */}
-        <Route path="/add-to-list" element={<AddToListPage />} /> {/* Add this */}
+          {/* AddToListPage route */}
+          <Route path="/add-to-list" element={<AddToListPage />} /> {/* Add this */}
 
-        {/* Redirect if the user is not authenticated */}
-        <Route
-          path="/*"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/home" />
-            ) : (
-              <Navigate
-                to="/signup"
-                state={{ error: "You must sign up to access this page." }}
-              />
-            )
-          }
-        />
-      </Routes>
-    </Router>
+          {/* Redirect if the user is not authenticated */}
+          <Route
+            path="/*"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/home" />
+              ) : (
+                <Navigate
+                  to="/signup"
+                  state={{ error: "You must sign up to access this page." }}
+                />
+              )
+            }
+          />
+        </Routes>
+      </Router>
+    </>
   );
 }
 
