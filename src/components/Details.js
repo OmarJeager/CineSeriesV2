@@ -291,7 +291,7 @@ const Details = () => {
         userEmail: currentUser.email,
         userName: currentUser.displayName || currentUser.email.split('@')[0],
         createdAt: rtdbServerTimestamp(),
-        replies: []
+        replies: null // Change from [] to null
       });
       setNewComment("");
       setNewRating(0);

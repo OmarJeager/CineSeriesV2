@@ -34,6 +34,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   });
   const [selectedCategory, setSelectedCategory] = useState("streaming");
   const [backgroundImage, setBackgroundImage] = useState("");
+  const [notifications, setNotifications] = useState(0);
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
