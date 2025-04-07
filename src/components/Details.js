@@ -17,7 +17,7 @@ import {
 } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, firestore } from "../firebase";
-import { getDatabase, ref, push, onValue, serverTimestamp as rtdbServerTimestamp, update, remove } from "firebase/database";
+import { getDatabase, ref, push, onValue, serverTimestamp as rtdbServerTimestamp, update, remove, get } from "firebase/database";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Details.css";
@@ -477,10 +477,14 @@ const Details = () => {
       alert("Please sign in to react to comments");
       return;
     }
-
+  
     try {
-      const commentRef = ref(database, `comments/${commentId}/reactions/${emoji}`);
-      await update(commentRef, (prevCount) => (prevCount || 0) + 1);
+      const reactionRef = ref(database, `comments/${commentId}/reactions/${emoji}`);
+      const snapshot = await get(reactionRef);
+      const currentCount = snapshot.exists() ? snapshot.val() : 0;
+  
+      // Update the reaction count
+      await update(reactionRef, { ".value": currentCount + 1 });
     } catch (error) {
       console.error("Error reacting to comment:", error);
       alert("Failed to react to comment. Please try again.");
