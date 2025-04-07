@@ -39,6 +39,11 @@ const Comment = ({ comment, onAddReply, currentUser }) => {
     return timestamp.toDate().toLocaleString();
   };
 
+  const handleReplyClick = () => {
+    setShowReplyForm(true);
+    setReplyText(`@${comment.userName} `); // Prefill with @username
+  };
+
   return (
     <motion.div 
       className="comment"
@@ -62,7 +67,7 @@ const Comment = ({ comment, onAddReply, currentUser }) => {
       {currentUser && (
         <button 
           className="reply-btn"
-          onClick={() => setShowReplyForm(!showReplyForm)}
+          onClick={handleReplyClick} // Use the new handler
         >
           {showReplyForm ? "Cancel" : "Reply"}
         </button>
