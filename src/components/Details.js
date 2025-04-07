@@ -22,9 +22,11 @@ import "./Details.css";
 
 const database = getDatabase();
 
-const Comment = ({ comment, onAddReply, currentUser }) => {
+const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactToComment, currentUser }) => {
   const [replyText, setReplyText] = useState("");
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedText, setEditedText] = useState(comment.text);
 
   const handleReplySubmit = () => {
     if (replyText.trim()) {
@@ -34,14 +36,26 @@ const Comment = ({ comment, onAddReply, currentUser }) => {
     }
   };
 
+  const handleEditSubmit = () => {
+    if (editedText.trim()) {
+      onEditComment(comment.id, editedText);
+      setIsEditing(false);
+    }
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      onDeleteComment(comment.id);
+    }
+  };
+
+  const handleReact = () => {
+    onReactToComment(comment.id);
+  };
+
   const formatDate = (timestamp) => {
     if (!timestamp?.toDate) return "Just now";
     return timestamp.toDate().toLocaleString();
-  };
-
-  const handleReplyClick = () => {
-    setShowReplyForm(true);
-    setReplyText(`@${comment.userName} `); // Prefill with @username
   };
 
   return (
@@ -49,6 +63,7 @@ const Comment = ({ comment, onAddReply, currentUser }) => {
       className="comment"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
     >
       <div className="comment-header">
@@ -62,17 +77,40 @@ const Comment = ({ comment, onAddReply, currentUser }) => {
           ))}
         </div>
       </div>
-      <div className="comment-text">{comment.text}</div>
-      
-      {currentUser && (
-        <button 
-          className="reply-btn"
-          onClick={handleReplyClick} // Use the new handler
-        >
-          {showReplyForm ? "Cancel" : "Reply"}
-        </button>
+
+      {isEditing ? (
+        <div className="edit-form">
+          <textarea
+            value={editedText}
+            onChange={(e) => setEditedText(e.target.value)}
+            rows={2}
+          />
+          <button onClick={handleEditSubmit} disabled={!editedText.trim()}>
+            Save
+          </button>
+          <button onClick={() => setIsEditing(false)}>Cancel</button>
+        </div>
+      ) : (
+        <div className="comment-text">{comment.text}</div>
       )}
-      
+
+      {currentUser && (
+        <div className="comment-actions">
+          <button onClick={handleReact}>
+            👍 {comment.reactions || 0}
+          </button>
+          {currentUser.uid === comment.userId && (
+            <>
+              <button onClick={() => setIsEditing(true)}>Edit</button>
+              <button onClick={handleDelete}>Delete</button>
+            </>
+          )}
+          <button onClick={() => setShowReplyForm(!showReplyForm)}>
+            {showReplyForm ? "Cancel" : "Reply"}
+          </button>
+        </div>
+      )}
+
       {showReplyForm && (
         <div className="reply-form">
           <textarea
@@ -89,7 +127,7 @@ const Comment = ({ comment, onAddReply, currentUser }) => {
           </button>
         </div>
       )}
-      
+
       {comment.replies && Object.values(comment.replies).map((reply, index) => (
         <motion.div 
           key={index}
@@ -327,6 +365,36 @@ const Details = () => {
     }
   };
 
+  const handleEditComment = async (commentId, newText) => {
+    try {
+      const commentRef = ref(database, `comments/${commentId}`);
+      await update(commentRef, { text: newText });
+    } catch (error) {
+      console.error("Error editing comment:", error);
+      alert("Failed to edit comment. Please try again.");
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const commentRef = ref(database, `comments/${commentId}`);
+      await update(commentRef, null); // Deletes the comment
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      alert("Failed to delete comment. Please try again.");
+    }
+  };
+
+  const handleReactToComment = async (commentId) => {
+    try {
+      const commentRef = ref(database, `comments/${commentId}/reactions`);
+      await update(commentRef, (prevReactions) => (prevReactions || 0) + 1);
+    } catch (error) {
+      console.error("Error reacting to comment:", error);
+      alert("Failed to react to comment. Please try again.");
+    }
+  };
+
   if (!details) return (
     <motion.div 
       className="loading"
@@ -426,9 +494,7 @@ const Details = () => {
               )}
             </motion.p>
             <motion.button
-              className={`watchlist-btn ${
-                watchlist.some(item => item.id === details.id) ? "added" : ""
-              }`}
+              className="watchlist-btn"
               onClick={toggleWatchlist}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -701,6 +767,9 @@ const Details = () => {
                 key={comment.id}
                 comment={comment}
                 onAddReply={handleAddReply}
+                onEditComment={handleEditComment}
+                onDeleteComment={handleDeleteComment}
+                onReactToComment={handleReactToComment}
                 currentUser={currentUser}
               />
             ))
