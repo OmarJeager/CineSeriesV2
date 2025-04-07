@@ -24,6 +24,8 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   const [ratings, setRatings] = useState({});
   const [selectedItem, setSelectedItem] = useState(null); // For the modal
   const [showRatingModal, setShowRatingModal] = useState(false); // Modal visibility
+  const [trending, setTrending] = useState([]);
+  const [timeWindow, setTimeWindow] = useState("day"); // "day" or "week"
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
@@ -122,6 +124,21 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
     fetchRecentContent();
   }, []);
 
+  useEffect(() => {
+    const fetchTrending = async () => {
+      try {
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/trending/all/${timeWindow}?api_key=${API_KEY}`
+        );
+        setTrending(response.data.results.slice(0, 10)); // Limit to 10 items
+      } catch (error) {
+        console.error("Error fetching trending data:", error);
+      }
+    };
+
+    fetchTrending();
+  }, [timeWindow]); // Refetch when timeWindow changes
+
   const addToWatchlist = (item) => {
     setWatchlist((prevWatchlist) => {
       // Avoid duplicates
@@ -172,6 +189,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   };
 
   return (
+    
     <div className="home-container">
       {/* Success Message */}
       {successMessage && (
@@ -375,6 +393,84 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
               <p>Millions of movies, TV shows, and people to discover. Explore now.</p>
             </div>
 
+            {/* Move Trending Section Here */}
+            <div className="trending-section">
+              <h2>Trending</h2>
+              <div className="time-window-buttons">
+                <button
+                  className={timeWindow === "day" ? "active" : ""}
+                  onClick={() => setTimeWindow("day")}
+                >
+                  Today
+                </button>
+                <button
+                  className={timeWindow === "week" ? "active" : ""}
+                  onClick={() => setTimeWindow("week")}
+                >
+                  This Week
+                </button>
+              </div>
+              <div className="results-grid">
+                {trending.map((item) => (
+                  <div
+                    key={item.id}
+                    className="result-card"
+                    onClick={() => navigate(`/details/${item.media_type}/${item.id}`)}
+                  >
+                    <div className="image-container">
+                      <img
+                        src={
+                          item.poster_path
+                            ? `https://image.tmdb.org/t/p/w300${item.poster_path}`
+                            : "/placeholder.jpg"
+                        }
+                        alt={item.title || item.name}
+                      />
+                      {/* Add Watchlist Icon */}
+                      <button
+                        className={`watchlist-icon ${isInWatchlist(item) ? "in-watchlist" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation
+                          addToWatchlist(item);
+                        }}
+                      >
+                        <FaBookmark title={isInWatchlist(item) ? "In Watchlist" : "Add to Watchlist"} />
+                      </button>
+                      {/* Add to List Icon */}
+                      <button
+                        className={`add-to-list-icon ${isInCustomList(item) ? "in-list" : ""}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCustomList(item);
+                        }}
+                      >
+                        <FaPlusCircle title={isInCustomList(item) ? "In List" : "Add to List"} />
+                      </button>
+                      {/* Add Star Icon */}
+                      <button
+                        className="rate-icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRatingModal(item);
+                        }}
+                      >
+                        <FaStar title="Rate this item" />
+                      </button>
+                    </div>
+                    <div className="result-info">
+                      <h3>{item.title || item.name}</h3>
+                      <p>
+                        {item.media_type === "movie" ? "Movie" : "TV Show"} •{" "}
+                        {item.release_date?.substring(0, 4) || item.first_air_date?.substring(0, 4)}
+                      </p>
+                      <span className="rating">★ {item.vote_average?.toFixed(1)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Explore Section */}
             <div className="explore-section">
               <h2>Explore Movies</h2>
               <div className="results-grid">
@@ -493,210 +589,6 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                     <div className="result-info">
                       <h3>{tv.name}</h3>
                       <p>First Air Year: {tv.first_air_date?.substring(0, 4)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="random-section">
-              <h2>Random Movies</h2>
-              <div className="results-grid">
-                {randomMovies.map((movie) => (
-                  <div
-                    key={movie.id}
-                    className="result-card"
-                    onClick={() => navigate(`/details/movie/${movie.id}`)}
-                  >
-                    <div className="image-container">
-                      <img
-                        src={
-                          movie.poster_path
-                            ? `https://image.tmdb.org/t/p/w300${movie.poster_path}`
-                            : "/placeholder.jpg"
-                        }
-                        alt={movie.title}
-                      />
-                      {/* Add Watchlist Icon */}
-                      <button
-                        className={`watchlist-icon ${isInWatchlist(movie) ? "in-watchlist" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation
-                          addToWatchlist(movie);
-                        }}
-                      >
-                        <FaBookmark title={isInWatchlist(movie) ? "In Watchlist" : "Add to Watchlist"} />
-                      </button>
-                      {/* Add to List Icon */}
-                      <button
-                        className={`add-to-list-icon ${isInCustomList(movie) ? "in-list" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCustomList(movie);
-                        }}
-                      >
-                        <FaPlusCircle title={isInCustomList(movie) ? "In List" : "Add to List"} />
-                      </button>
-                      {/* Add Star Icon */}
-                      <button
-                        className="rate-icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openRatingModal(movie);
-                        }}
-                      >
-                        <FaStar title="Rate this item" />
-                      </button>
-                      {/* Display Rating Number */}
-                      {ratings[movie.id] && (
-                        <span className="rating-number">{ratings[movie.id]} ★</span>
-                      )}
-                      {/* Add Star Rating */}
-                      <StarRating
-                        initialRating={ratings[movie.id] || 0}
-                        onRate={(rating) => handleRating(movie, rating)}
-                      />
-                    </div>
-                    <div className="result-info">
-                      <h3>{movie.title}</h3>
-                      
-                      
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <h2>Random TV Shows</h2>
-              <div className="results-grid">
-                {randomTVShows.map((tv) => (
-                  <div
-                    key={tv.id}
-                    className="result-card"
-                    onClick={() => navigate(`/details/tv/${tv.id}`)}
-                  >
-                    <div className="image-container">
-                      <img
-                        src={
-                          tv.poster_path
-                            ? `https://image.tmdb.org/t/p/w300${tv.poster_path}`
-                            : "/placeholder.jpg"
-                        }
-                        alt={tv.name}
-                      />
-                      {/* Add Watchlist Icon */}
-                      <button
-                        className={`watchlist-icon ${isInWatchlist(tv) ? "in-watchlist" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation
-                          addToWatchlist(tv);
-                        }}
-                      >
-                        <FaBookmark title={isInWatchlist(tv) ? "In Watchlist" : "Add to Watchlist"} />
-                      </button>
-                      {/* Add to List Icon */}
-                      <button
-                        className={`add-to-list-icon ${isInCustomList(tv) ? "in-list" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCustomList(tv);
-                        }}
-                      >
-                        <FaPlusCircle title={isInCustomList(tv) ? "In List" : "Add to List"} />
-                      </button>
-                      {/* Add Star Icon */}
-                      <button
-                        className="rate-icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openRatingModal(tv);
-                        }}
-                      >
-                        <FaStar title="Rate this item" />
-                      </button>
-                      {/* Display Rating Number */}
-                      {ratings[tv.id] && (
-                        <span className="rating-number">{ratings[tv.id]} ★</span>
-                      )}
-                      {/* Add Star Rating */}
-                      <StarRating
-                        initialRating={ratings[tv.id] || 0}
-                        onRate={(rating) => handleRating(tv, rating)}
-                      />
-                    </div>
-                    <div className="result-info">
-                      <h3>{tv.name}</h3>
-                      <p>First Air Year: {tv.first_air_date?.substring(0, 4)}</p>
-                      <span className="rating">★ {tv.vote_average?.toFixed(1)}</span>
-                      {/* Display Rating */}
-                      {ratings[tv.id] && (
-                        <div className="item-rating">Rated: {ratings[tv.id]} ★</div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <h2>Random Anime</h2>
-              <div className="results-grid">
-                {randomAnime.map((anime) => (
-                  <div
-                    key={anime.mal_id}
-                    className="result-card"
-                    onClick={() => window.open(anime.url, "_blank")}
-                  >
-                    <div className="image-container">
-                      <img
-                        src={anime.images.jpg.image_url || "/placeholder.jpg"}
-                        alt={anime.title}
-                      />
-                      {/* Add Watchlist Icon */}
-                      <button
-                        className={`watchlist-icon ${isInWatchlist(anime) ? "in-watchlist" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation
-                          addToWatchlist(anime);
-                        }}
-                      >
-                        <FaBookmark title={isInWatchlist(anime) ? "In Watchlist" : "Add to Watchlist"} />
-                      </button>
-                      {/* Add to List Icon */}
-                      <button
-                        className={`add-to-list-icon ${isInCustomList(anime) ? "in-list" : ""}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCustomList(anime);
-                        }}
-                      >
-                        <FaPlusCircle title={isInCustomList(anime) ? "In List" : "Add to List"} />
-                      </button>
-                      {/* Add Star Icon */}
-                      <button
-                        className="rate-icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openRatingModal(anime);
-                        }}
-                      >
-                        <FaStar title="Rate this item" />
-                      </button>
-                      {/* Display Rating Number */}
-                      {ratings[anime.mal_id] && (
-                        <span className="rating-number">{ratings[anime.mal_id]} ★</span>
-                      )}
-                      {/* Add Star Rating */}
-                      <StarRating
-                        initialRating={ratings[anime.mal_id] || 0}
-                        onRate={(rating) => handleRating(anime, rating)}
-                      />
-                    </div>
-                    <div className="result-info">
-                      <h3>{anime.title}</h3>
-                      <p>Episodes: {anime.episodes || "N/A"}</p>
-                      <span className="rating">★ {anime.score?.toFixed(1)}</span>
-                      {/* Display Rating */}
-                      {ratings[anime.mal_id] && (
-                        <div className="item-rating">Rated: {ratings[anime.mal_id]} ★</div>
-                      )}
                     </div>
                   </div>
                 ))}
