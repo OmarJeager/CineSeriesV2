@@ -26,6 +26,14 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   const [showRatingModal, setShowRatingModal] = useState(false); // Modal visibility
   const [trending, setTrending] = useState([]);
   const [timeWindow, setTimeWindow] = useState("day"); // "day" or "week"
+  const [latestTrailers, setLatestTrailers] = useState({
+    streaming: [],
+    onTV: [],
+    forRent: [],
+    inTheaters: [],
+  });
+  const [selectedCategory, setSelectedCategory] = useState("streaming");
+  const [backgroundImage, setBackgroundImage] = useState("");
   const navigate = useNavigate();
   const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
@@ -138,6 +146,41 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
 
     fetchTrending();
   }, [timeWindow]); // Refetch when timeWindow changes
+
+  useEffect(() => {
+    const fetchLatestTrailers = async () => {
+      try {
+        const [streamingResponse, onTVResponse, forRentResponse, inTheatersResponse] = await Promise.all([
+          axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&region=US`), // Streaming
+          axios.get(`https://api.themoviedb.org/3/tv/on_the_air?api_key=${API_KEY}&region=US`), // On TV
+          axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&region=US`), // For Rent
+          axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&region=US`), // In Theaters
+        ]);
+
+        setLatestTrailers({
+          streaming: streamingResponse.data.results.slice(0, 5),
+          onTV: onTVResponse.data.results.slice(0, 5),
+          forRent: forRentResponse.data.results.slice(0, 5),
+          inTheaters: inTheatersResponse.data.results.slice(0, 5),
+        });
+      } catch (error) {
+        console.error("Error fetching latest trailers:", error);
+      }
+    };
+
+    fetchLatestTrailers();
+  }, []);
+
+  useEffect(() => {
+    // Set a random background image from the selected category
+    const randomImage =
+      latestTrailers[selectedCategory]?.length > 0
+        ? latestTrailers[selectedCategory][Math.floor(Math.random() * latestTrailers[selectedCategory].length)]
+            ?.backdrop_path
+        : null;
+
+    setBackgroundImage(randomImage ? `https://image.tmdb.org/t/p/w780${randomImage}` : "");
+  }, [selectedCategory, latestTrailers]);
 
   const addToWatchlist = (item) => {
     setWatchlist((prevWatchlist) => {
@@ -393,7 +436,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
               <p>Millions of movies, TV shows, and people to discover. Explore now.</p>
             </div>
 
-            {/* Move Trending Section Here */}
+            {/* Trending Section */}
             <div className="trending-section">
               <h2>Trending</h2>
               <div className="time-window-buttons">
@@ -464,6 +507,60 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                         {item.release_date?.substring(0, 4) || item.first_air_date?.substring(0, 4)}
                       </p>
                       <span className="rating">★ {item.vote_average?.toFixed(1)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Latest Trailers Section */}
+            <div
+              className="latest-trailers-section"
+              style={{
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <h2>Latest Trailers</h2>
+
+              {/* Category Buttons */}
+              <div className="category-buttons">
+                {["streaming", "onTV", "forRent", "inTheaters"].map((category) => (
+                  <button
+                    key={category}
+                    className={selectedCategory === category ? "active" : ""}
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category === "streaming"
+                      ? "Streaming"
+                      : category === "onTV"
+                      ? "On TV"
+                      : category === "forRent"
+                      ? "For Rent"
+                      : "In Theaters"}
+                  </button>
+                ))}
+              </div>
+
+              {/* Display Trailers for Selected Category */}
+              <div className="trailers-grid">
+                {latestTrailers[selectedCategory]?.map((item) => (
+                  <div
+                    key={item.id}
+                    className="trailer-card"
+                    style={{
+                      backgroundImage: `url(https://image.tmdb.org/t/p/w780${item.backdrop_path})`,
+                    }}
+                  >
+                    <div className="trailer-content">
+                      <h4>{item.title || item.name}</h4>
+                      <button
+                        className="play-button"
+                        onClick={() => navigate(`/details/${item.media_type || "movie"}/${item.id}`)}
+                      >
+                        ▶ Play Trailer
+                      </button>
                     </div>
                   </div>
                 ))}
