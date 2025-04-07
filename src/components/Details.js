@@ -81,13 +81,12 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
       <div className="reactions">
         {displayedReactions.map(([emoji, count]) => (
           <span key={emoji} className="reaction">
-            {emoji} {count}
+            {emoji} {typeof count === "number" ? count : 0} {/* Ensure count is a number */}
           </span>
         ))}
         {sortedReactions.length > 3 && (
           <button onClick={() => setShowAllReactions(!showAllReactions)} className="show-more-btn">
-            {showAllReactions ? "Show Less" : "Show More"
-            }
+            {showAllReactions ? "Show Less" : "Show More"}
           </button>
         )}
       </div>
@@ -479,12 +478,13 @@ const Details = () => {
     }
   
     try {
-      const reactionRef = ref(database, `comments/${commentId}/reactions/${emoji}`);
-      const snapshot = await get(reactionRef);
+      const reactionRef = ref(database, `comments/${commentId}/reactions`);
+      const emojiRef = ref(database, `comments/${commentId}/reactions/${emoji}`);
+      const snapshot = await get(emojiRef);
       const currentCount = snapshot.exists() ? snapshot.val() : 0;
   
-      // Update the reaction count
-      await update(reactionRef, { ".value": currentCount + 1 });
+      // Update the reaction count as an object
+      await update(reactionRef, { [emoji]: currentCount + 1 });
     } catch (error) {
       console.error("Error reacting to comment:", error);
       alert("Failed to react to comment. Please try again.");

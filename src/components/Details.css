@@ -762,3 +762,93 @@
 .show-more-btn:hover {
   text-decoration: underline;
 }
+
+/* Responsive Design for Mobile Screens */
+@media (max-width: 768px) {
+  .details-container {
+    padding: 10px;
+  }
+
+  .hero-section {
+    height: 250px;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 10px;
+  }
+
+  .poster {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+
+  .hero-info {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .hero-info h1 {
+    font-size: 1.8rem;
+  }
+
+  .meta-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .rating-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .watchlist-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  .comments-section {
+    padding: 1rem;
+  }
+
+  .add-comment textarea {
+    font-size: 14px;
+  }
+
+  .episodes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cast-scroll, .similar-scroll {
+    gap: 0.5rem;
+  }
+
+  .cast-card, .similar-card {
+    width: 120px;
+  }
+
+  .reaction {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .emoji-btn {
+    font-size: 16px;
+  }
+
+  .overview {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .videos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .video-card {
+    aspect-ratio: 16/9;
+  }
+}
