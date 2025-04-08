@@ -808,3 +808,20 @@
   padding: 5px 8px;
   z-index: 10;
 }
+.collections-section {
+  margin: 20px 0;
+}
+
+.collection {
+  margin-bottom: 20px;
+}
+
+.collection h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.collection .results-grid {
+  display: flex;
+  gap: 20px;
+}

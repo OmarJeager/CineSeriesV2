@@ -85,7 +85,7 @@ function App() {
           <Route path="/watchlist" element={<Watchlist watchlist={watchlist} setWatchlist={setWatchlist} />} />
 
           {/* AddToListPage route */}
-          <Route path="/add-to-list" element={<AddToListPage />} /> {/* Add this */}
+          <Route path="/add-to-list" element={<AddToList addToList={addToList} setAddToList={setAddToList} />} /> {/* Add this */}
 
           {/* Redirect if the user is not authenticated */}
           <Route
