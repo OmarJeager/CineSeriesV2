@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import _ from "lodash"; // Import lodash for shuffling
 import "./Challenge.css"; // Add a CSS file for styling
 
 const Challenge = () => {
@@ -12,40 +13,52 @@ const Challenge = () => {
     const fetchQuestions = async (category) => {
         try {
             let response;
-            const API_KEY = "0b5b088bab00665e8e996c070b4e5991"; // Directly using your API key
+            const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
+
+            const generateOptions = (correctAnswer, allOptions) => {
+                const randomOptions = _.sampleSize(
+                    allOptions.filter(option => option !== correctAnswer),
+                    3
+                );
+                return _.shuffle([correctAnswer, ...randomOptions]);
+            };
 
             if (category === "movies") {
                 response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`);
+                const allTitles = response.data.results.map(movie => movie.title);
                 const movieQuestions = response.data.results.slice(0, 10).map((movie) => ({
                     question: `What is the title of this movie?`,
-                    options: [movie.title, "Option 2", "Option 3", "Option 4"], // Replace with real options
+                    options: generateOptions(movie.title, allTitles),
                     answer: movie.title,
                     image: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
                 }));
                 setQuestions(movieQuestions);
             } else if (category === "anime") {
                 response = await axios.get(`https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&query=anime`);
+                const allTitles = response.data.results.map(anime => anime.name);
                 const animeQuestions = response.data.results.slice(0, 10).map((anime) => ({
                     question: `What is the title of this anime?`,
-                    options: [anime.name, "Option 2", "Option 3", "Option 4"], // Replace with real options
+                    options: generateOptions(anime.name, allTitles),
                     answer: anime.name,
                     image: `https://image.tmdb.org/t/p/w500${anime.poster_path}`,
                 }));
                 setQuestions(animeQuestions);
             } else if (category === "series") {
                 response = await axios.get(`https://api.themoviedb.org/3/tv/popular?api_key=${API_KEY}`);
+                const allTitles = response.data.results.map(series => series.name);
                 const seriesQuestions = response.data.results.slice(0, 10).map((series) => ({
                     question: `What is the title of this series?`,
-                    options: [series.name, "Option 2", "Option 3", "Option 4"], // Replace with real options
+                    options: generateOptions(series.name, allTitles),
                     answer: series.name,
                     image: `https://image.tmdb.org/t/p/w500${series.poster_path}`,
                 }));
                 setQuestions(seriesQuestions);
             } else if (category === "people") {
                 response = await axios.get(`https://api.themoviedb.org/3/person/popular?api_key=${API_KEY}`);
+                const allNames = response.data.results.map(person => person.name);
                 const peopleQuestions = response.data.results.slice(0, 10).map((person) => ({
                     question: `Who is this person?`,
-                    options: [person.name, "Option 2", "Option 3", "Option 4"], // Replace with real options
+                    options: generateOptions(person.name, allNames),
                     answer: person.name,
                     image: `https://image.tmdb.org/t/p/w500${person.profile_path}`,
                 }));
