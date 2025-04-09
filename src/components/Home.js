@@ -235,6 +235,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
   return (
     
     <div className="home-container">
+      <div className="nav-item">
+  <button onClick={() => navigate("/challenge")}>Challenge</button>
+</div>
+
       {/* Success Message */}
       {successMessage && (
         <div className="success-message">

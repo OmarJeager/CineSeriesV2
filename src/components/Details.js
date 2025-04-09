@@ -26,6 +26,23 @@ import Modal from "react-modal"; // Install react-modal if not already installed
 Modal.setAppElement("#root"); // Set the root element for accessibility
 
 const database = getDatabase();
+ 
+const renderTextWithMentions = (text) => {
+  const mentionRegex = /@(\w+)/g; // Matches @username
+  const parts = text.split(mentionRegex);
+
+  return parts.map((part, index) => {
+    if (index % 2 === 1) {
+      // This is a mention
+      return (
+        <span key={index} className="mention">
+          @{part}
+        </span>
+      );
+    }
+    return part; // Regular text
+  });
+};
 
 const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactToComment, currentUser }) => {
   const [replyText, setReplyText] = useState("");
@@ -126,7 +143,9 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
           <button onClick={() => setIsEditing(false)}>Cancel</button>
         </div>
       ) : (
-        <div className="comment-text">{comment.text}</div>
+        <div className="comment-text">
+          {renderTextWithMentions(comment.text)}
+        </div>
       )}
 
       {renderReactions()}

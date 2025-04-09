@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Watchlist from "./components/Watchlist";
 import AddToList from "./components/AddToList"; // AddToList component
 import AddToListPage from "./components/AddToList"; // Import the new page
+import Challenge from "./components/challenge"; // Import Challenge component
 import { ToastContainer } from "react-toastify";
 
 function App() {
@@ -86,6 +87,9 @@ function App() {
 
           {/* AddToListPage route */}
           <Route path="/add-to-list" element={<AddToList addToList={addToList} setAddToList={setAddToList} />} /> {/* Add this */}
+
+          {/* Challenge route */}
+          <Route path="/challenge" element={<Challenge />} />
 
           {/* Redirect if the user is not authenticated */}
           <Route
