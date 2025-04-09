@@ -143,9 +143,11 @@ const Comment = ({ comment, onAddReply, onEditComment, onDeleteComment, onReactT
 
       {currentUser && (
         <div className="comment-actions">
-          <button onClick={handleReact}>
-            👍 {comment.reactions || 0}
+          
+          <button onClick={() => {}} disabled>
+            👍 {comment.reactions ? Object.values(comment.reactions).reduce((a, b) => a + b, 0) : 0}
           </button>
+
           {currentUser.uid === comment.userId && (
             <>
               <button onClick={() => setIsEditing(true)}>Edit</button>
