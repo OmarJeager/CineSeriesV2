@@ -1,58 +1,111 @@
+/* General container styling */
 .quiz-container {
-    text-align: center;
     font-family: Arial, sans-serif;
+    text-align: center;
     padding: 20px;
-}
-
-.category-selection {
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    color: #333;
+}
+
+/* Category selection styling */
+.category-selection h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .category-selection button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
     margin: 10px;
-    padding: 10px;
-    font-size: 16px;
+    font-size: 1rem;
+    border-radius: 5px;
     cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
 }
 
-.question-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.category-selection button:hover {
+    background-color: #45a049;
+    transform: scale(1.1);
 }
 
-.question-section h2 {
+/* Score section styling */
+.score-section h2 {
+    font-size: 2rem;
     margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
 }
 
-.options button {
-    margin: 10px;
-    padding: 10px;
-    font-size: 16px;
+.score-section button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
     cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.score-section button:hover {
+    background-color: #1e88e5;
+    transform: scale(1.1);
+}
+
+/* Question section styling */
+.question-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .question-image {
-    max-width: 100%;
-    height: auto;
-    margin: 20px 0;
+    max-width: 300px;
+    margin: 20px auto;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 1s ease-in-out;
 }
 
-.score-section {
-    text-align: center;
-}
-
-.score-section h2 {
-    margin-bottom: 20px;
-}
-
-
-.score-section button {
-    padding: 10px;
-    font-size: 16px;
+.options button {
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
     cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.options button:hover {
+    background-color: #e64a19;
+    transform: scale(1.1);
+}
+
+/* Loading section styling */
+div.loading {
+    font-size: 1.5rem;
+    color: #555;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

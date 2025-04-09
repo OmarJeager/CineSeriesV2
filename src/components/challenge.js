@@ -12,7 +12,7 @@ const Challenge = () => {
     const fetchQuestions = async (category) => {
         try {
             let response;
-            const API_KEY = process.env.REACT_APP_API_KEY; // Use the API key from the .env file
+            const API_KEY = "0b5b088bab00665e8e996c070b4e5991"; // Directly using your API key
 
             if (category === "movies") {
                 response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`);
