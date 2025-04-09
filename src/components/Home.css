@@ -825,3 +825,14 @@
   display: flex;
   gap: 20px;
 }
+
+.challenge-icon {
+  cursor: pointer;
+  color: gray;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.challenge-icon:hover {
+  color: #ffaa00;
+  transform: scale(1.2);
+}

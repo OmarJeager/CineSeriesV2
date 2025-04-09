@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle, FaStar } from "react-icons/fa";
+import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle, FaStar, FaGamepad } from "react-icons/fa";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Home.css";
 import StarRating from "./StarRating";
@@ -338,6 +338,10 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
 
           <div className="add-to-list-icon" onClick={() => navigate("/add-to-list")}>
             <FaPlusCircle size={28} title="Add to List" />
+          </div>
+
+          <div className="challenge-icon" onClick={() => navigate("/challenge")}>
+            <FaGamepad size={28} title="Challenge" />
           </div>
 
           <div className="profile-section" onClick={() => setShowProfile(!showProfile)}>
