@@ -16,16 +16,19 @@
 
   .form-wrapper {
     background-color: hsl(0, 0%, 100%);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px; /* Increased padding */
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
     animation: fadeIn 0.5s ease-in-out;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    width: 400px; /* Increased width */
+    z-index: 2; /* Ensures it appears above the caption */
+    position: relative; /* Required for z-index to work */
   }
   
   .login-container.dark-mode .form-wrapper {
     background-color: #444;
-    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 6px 15px rgba(255, 255, 255, 0.15);
   }
   
   .login-title {
@@ -125,4 +128,21 @@
   .remember-me input {
     margin-right: 5px;
   }
-  
+
+  .caption {
+    position: absolute;
+    bottom: 20px; /* Keeps it at the bottom */
+    left: 20px; /* Aligns it to the left */
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7); /* Slightly darker for better readability */
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    max-width: 90%; /* Prevents the caption from overflowing */
+    line-height: 1.5; /* Improves readability for longer text */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal; /* Allows text wrapping */
+    z-index: 1; /* Ensures it appears below the form */
+    text-align: left; /* Ensures text aligns properly */
+  }
