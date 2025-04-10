@@ -690,9 +690,9 @@ const Details = () => {
                           src={`https://image.tmdb.org/t/p/w300${episode.still_path}`}
                           alt={episode.name}
                         />
-                      ) : (
+                        ) : (
                         <div className="episode-placeholder">No Image</div>
-                      )}
+                    )}
                       <div className="episode-number">Episode {episode.episode_number}</div>
                     </div>
                     <div className="episode-info">
