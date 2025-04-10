@@ -12,6 +12,65 @@
     color: #333;
 }
 
+/* Category selection, score section, and question section styling */
+.category-selection, .score-section, .question-section {
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* General input styling */
+.animated-input, .animated-select {
+    width: 50%; /* Already set to 50% */
+    max-width: 300px; /* Add a maximum width for better responsiveness */
+    padding: 10px;
+    margin: 10px auto; /* Center the input/select horizontally */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect for input and select */
+.animated-input:hover, .animated-select:hover {
+    border-color: #007bff;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+    transform: scale(1.02);
+}
+
+/* Focus effect for input and select */
+.animated-input:focus, .animated-select:focus {
+    outline: none;
+    border-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 86, 179, 0.3);
+}
+
+/* Button styling */
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hover-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.hover-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Category selection styling */
 .category-selection h2 {
     font-size: 2rem;
@@ -19,44 +78,11 @@
     animation: fadeIn 1s ease-in-out;
 }
 
-.category-selection button {
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.category-selection button:hover {
-    background-color: #45a049;
-    transform: scale(1.1);
-}
-
 /* Score section styling */
 .score-section h2 {
     font-size: 2rem;
     margin-bottom: 20px;
     animation: fadeIn 1s ease-in-out;
-}
-
-.score-section button {
-    background-color: #2196f3;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.score-section button:hover {
-    background-color: #1e88e5;
-    transform: scale(1.1);
 }
 
 /* Question section styling */
@@ -74,6 +100,7 @@
     animation: fadeIn 1s ease-in-out;
 }
 
+/* Options button styling */
 .options button {
     background-color: #ff5722;
     color: white;
@@ -101,6 +128,7 @@ div.loading {
 /* Mistakes section styling */
 .mistakes-section {
     margin-top: 20px;
+    text-align: left;
     padding: 15px;
     border: 2px solid #f44336; /* Red border to highlight mistakes */
     border-radius: 8px;
@@ -114,11 +142,11 @@ div.loading {
 }
 
 .mistake-item {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #f44336;
+    border: 1px solid #f00;
     border-radius: 5px;
-    background-color: #fff; /* White background for individual items */
+    background-color: #ffe6e6;
 }
 
 .mistake-item p {
