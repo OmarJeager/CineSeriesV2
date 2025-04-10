@@ -7,8 +7,9 @@ const Challenge = () => {
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
     const [questions, setQuestions] = useState([]);
+    const [incorrectAnswers, setIncorrectAnswers] = useState([]); // Track incorrect answers
+    const [showMistakes, setShowMistakes] = useState(false); // Toggle to show mistakes
 
-    // Custom Questions for each category
     const movieQuestions = [
         { question: "Who directed 'Inception'?", options: ["Christopher Nolan", "Steven Spielberg", "Martin Scorsese", "Quentin Tarantino"], answer: "Christopher Nolan" },
         { question: "Which movie won the Oscar for Best Picture in 1994?", options: ["Forrest Gump", "Pulp Fiction", "The Shawshank Redemption", "The Lion King"], answer: "Forrest Gump" },
@@ -136,7 +137,7 @@ const Challenge = () => {
         { question: "What is the name of the main character in 'Black Clover'?", options: ["Asta", "Yuno", "Noelle", "Yami"], answer: "Asta" },
         { question: "Which anime features a character named 'Shinji Ikari'?", options: ["Neon Genesis Evangelion", "Code Geass", "Steins;Gate", "Gurren Lagann"], answer: "Neon Genesis Evangelion" }
     ];
-    // Function to set the questions based on selected category
+
     const fetchQuestions = (selectedCategory) => {
         switch (selectedCategory) {
             case "movies":
@@ -167,12 +168,23 @@ const Challenge = () => {
         setCurrentQuestion(0);
         setScore(0);
         setShowScore(false);
-        fetchQuestions(selectedCategory); // Fetch questions based on category
+        setIncorrectAnswers([]); // Reset incorrect answers
+        setShowMistakes(false); // Reset mistakes view
+        fetchQuestions(selectedCategory);
     };
 
     const handleAnswer = (selectedOption) => {
         if (selectedOption === questions[currentQuestion].answer) {
             setScore(score + 1);
+        } else {
+            setIncorrectAnswers((prev) => [
+                ...prev,
+                {
+                    question: questions[currentQuestion].question,
+                    correctAnswer: questions[currentQuestion].answer,
+                    selectedAnswer: selectedOption,
+                },
+            ]);
         }
 
         const nextQuestion = currentQuestion + 1;
@@ -188,7 +200,9 @@ const Challenge = () => {
         setCurrentQuestion(0);
         setScore(0);
         setShowScore(false);
-        setQuestions([]); // Clear previous questions
+        setQuestions([]);
+        setIncorrectAnswers([]); // Clear previous incorrect answers
+        setShowMistakes(false); // Reset mistakes view
     };
 
     return (
@@ -207,6 +221,21 @@ const Challenge = () => {
                 <div className="score-section">
                     <h2>Your Score: {score}/{questions.length}</h2>
                     <button onClick={restartGame}>Restart Quiz</button>
+                    {incorrectAnswers.length > 0 && (
+                        <button onClick={() => setShowMistakes(true)}>Review Mistakes</button>
+                    )}
+                    {showMistakes && (
+                        <div className="mistakes-section">
+                            <h3>Review Mistakes</h3>
+                            {incorrectAnswers.map((item, index) => (
+                                <div key={index} className="mistake-item">
+                                    <p><strong>Question:</strong> {item.question}</p>
+                                    <p><strong>Your Answer:</strong> {item.selectedAnswer}</p>
+                                    <p><strong>Correct Answer:</strong> {item.correctAnswer}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             ) : questions.length > 0 && currentQuestion < questions.length ? (
                 <div className="question-section">

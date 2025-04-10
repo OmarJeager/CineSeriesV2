@@ -98,6 +98,22 @@ div.loading {
     animation: fadeIn 1s ease-in-out;
 }
 
+/* Mistakes section styling */
+.mistakes-section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.mistake-item {
+    margin-bottom: 15px;
+}
+
+.mistake-item p {
+    margin: 5px 0;
+}
+
 /* Animations */
 @keyframes fadeIn {
     from {
