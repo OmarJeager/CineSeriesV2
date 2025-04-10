@@ -101,17 +101,34 @@ div.loading {
 /* Mistakes section styling */
 .mistakes-section {
     margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
+    padding: 15px;
+    border: 2px solid #f44336; /* Red border to highlight mistakes */
+    border-radius: 8px;
+    background-color: #ffe6e6; /* Light red background */
+}
+
+.mistakes-section h3 {
+    color: #d32f2f; /* Darker red for the heading */
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .mistake-item {
     margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #f44336;
+    border-radius: 5px;
+    background-color: #fff; /* White background for individual items */
 }
 
 .mistake-item p {
     margin: 5px 0;
+    font-size: 14px;
+    color: #333; /* Neutral text color */
+}
+
+.mistake-item strong {
+    color: #d32f2f; /* Highlighted text for labels */
 }
 
 /* Animations */
