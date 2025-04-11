@@ -166,13 +166,17 @@
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, transform 0.2s ease;
     animation: fadeIn 1.5s ease-in;
   }
   
   .login-button:hover {
     background: linear-gradient(90deg, #0056b3, #0099cc);
     transform: scale(1.06);
+  }
+
+  .login-button:active {
+    transform: scale(0.95); /* Add a "pressed" effect */
   }
   
   .error-message {
@@ -224,12 +228,13 @@
     padding: 10px 15px;
     border-radius: 6px;
     font-size: 12px;
-    max-width: 90%;
+    max-width: 35%; /* Limit width to 35% */
     line-height: 1.4;
-    overflow: hidden;
-    white-space: pre-line;
+    overflow-wrap: break-word; /* Ensure text wraps properly */
+    white-space: normal; /* Allow text to wrap */
     z-index: 1;
     animation: fadeIn 1s ease-in-out;
+    word-break: break-word; /* Break long words if necessary */
   }
   
   .small-caption {
@@ -256,19 +261,27 @@
     margin-top: 10px;
   }
   
-  .move-button {
-    padding: 8px 16px;
+  .form-buttons .move-button {
+    padding: 10px 20px;
     font-size: 14px;
     cursor: pointer;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #007bff;
     color: white;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    animation: buttonFadeIn 0.5s ease-in-out;
   }
-  
-  .move-button:hover {
+
+  .form-buttons .move-button:hover {
     background-color: #0056b3;
+    transform: scale(1.1); /* Slight zoom effect */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+  }
+
+  .form-buttons .move-button:active {
+    transform: scale(0.95); /* Add a "pressed" effect */
+    background-color: #003f7f;
   }
   
   @keyframes fadeIn {
@@ -372,6 +385,17 @@
     to {
         transform: translateX(100%);
         opacity: 0;
+    }
+  }
+
+  @keyframes buttonFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
   }
   

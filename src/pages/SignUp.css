@@ -43,7 +43,6 @@
   border-radius: 5px;
   font-size: 16px;
   transition: all 0.3s ease;
-  animation: fadeInUp 1.4s ease-in-out; /* Input animation */
 }
 
 .signup-input:hover {
@@ -66,12 +65,27 @@
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
-  animation: fadeInUp 1.6s ease-in-out; /* Button animation */
 }
 
 .signup-button:hover {
   background-color: #0056b3;
   transform: scale(1.05);
+}
+
+.form-buttons .move-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-buttons .move-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
 }
 
 .dark-mode-toggle {
@@ -80,18 +94,32 @@
   right: 20px;
   cursor: pointer;
   transition: transform 0.3s ease;
-  animation: fadeIn 1.8s ease-in-out; /* Toggle animation */
 }
 
 .dark-mode-toggle:hover {
   transform: scale(1.1);
 }
 
+/* Caption for movie */
+.caption {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 12px;
+  max-width: 35%;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 .already-have-account {
   margin-top: 15px;
   text-align: center;
   font-size: 14px;
-  animation: fadeInUp 2s ease-in-out; /* Text animation */
 }
 
 .already-have-account a {
@@ -104,13 +132,12 @@
   color: #0056b3;
 }
 
-/* Error message animation */
 .error-message {
   color: #ff4d4f;
   text-align: center;
   margin-bottom: 15px;
   font-size: 14px;
-  animation: fadeIn 1.5s ease-in-out; /* Error message animation */
+  animation: fadeIn 1.5s ease-in-out;
 }
 
 /* Animations */
