@@ -116,6 +116,13 @@
   word-break: break-word;
 }
 
+.caption.error {
+  color: #ff4d4f;
+  font-weight: bold;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff4d4f;
+}
+
 .already-have-account {
   margin-top: 15px;
   text-align: center;

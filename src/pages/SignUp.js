@@ -37,24 +37,37 @@ const SignUp = () => {
     setFormPosition(position);
   };
 
-  useEffect(() => {
-    const fetchBackground = async () => {
-      try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}`
-        );
-        const data = await response.json();
-        const randomMovie =
-          data.results[Math.floor(Math.random() * data.results.length)];
-        const imageUrl = `https://image.tmdb.org/t/p/original${randomMovie.backdrop_path}`;
-        const movieCaption = `🎬 ${randomMovie.title || randomMovie.name}: ${(randomMovie.overview || "No description available.").slice(0, 100)}...`;
-        setBackgroundImage(imageUrl);
-        setCaption(movieCaption);
-      } catch (error) {
-        console.error("Error fetching background image:", error);
+  const fetchBackground = async () => {
+    if (!navigator.onLine) {
+      console.error("No internet connection.");
+      setBackgroundImage(""); // Reset background image
+      setCaption("⚠️ Check your internet connection.");
+      document.body.style.backgroundColor = "#f5f5f5"; // Fallback background color
+      return;
+    }
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch background image");
       }
-    };
+      const data = await response.json();
+      const randomMovie =
+        data.results[Math.floor(Math.random() * data.results.length)];
+      const imageUrl = `https://image.tmdb.org/t/p/original${randomMovie.backdrop_path}`;
+      const movieCaption = `🎬 ${randomMovie.title || randomMovie.name}: ${(randomMovie.overview || "No description available.").slice(0, 100)}...`;
+      setBackgroundImage(imageUrl);
+      setCaption(movieCaption);
+    } catch (error) {
+      console.error("Error fetching background image:", error);
+      setBackgroundImage(""); // Reset background image
+      setCaption("⚠️ Check your internet connection.");
+      document.body.style.backgroundColor = "#f5f5f5"; // Fallback background color
+    }
+  };
 
+  useEffect(() => {
     fetchBackground();
     const interval = setInterval(() => {
       fetchBackground();
