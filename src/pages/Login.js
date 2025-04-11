@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase"; // Correct import path
-import { useNavigate, Link } from "react-router-dom"; // Use Link for navigation
-import { FaMoon, FaSun } from "react-icons/fa"; // Icons for dark mode toggle
-import "./Login.css"; // Import the CSS file for styling
+import { auth } from "../firebase";
+import { useNavigate, Link } from "react-router-dom";
+import { FaMoon, FaSun, FaFilm, FaStar, FaUserCircle, FaTicketAlt } from "react-icons/fa";
+import "./Login.css";
 
 const API_KEY = "0b5b088bab00665e8e996c070b4e5991";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false); // State for "Remember Me"
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
-  const [isDarkMode, setIsDarkMode] = useState(false); // State for dark mode
-  const [backgroundImage, setBackgroundImage] = useState(""); // State for background image
-  const [caption, setCaption] = useState(""); // State for caption
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [backgroundImage, setBackgroundImage] = useState("");
+  const [caption, setCaption] = useState("");
+  const [formPosition, setFormPosition] = useState("default");
   const navigate = useNavigate();
 
-  // Load email and password from localStorage if "Remember Me" was checked
   useEffect(() => {
     const savedEmail = localStorage.getItem("rememberedEmail");
-    const savedPassword = localStorage.getItem("rememberedPassword"); // Retrieve saved password
+    const savedPassword = localStorage.getItem("rememberedPassword");
     if (savedEmail && savedPassword) {
       setEmail(savedEmail);
       setPassword(savedPassword);
@@ -30,23 +30,19 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Clear any previous errors
-
+    setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
-
-      // Save email and password to localStorage if "Remember Me" is checked
       if (rememberMe) {
         localStorage.setItem("rememberedEmail", email);
-        localStorage.setItem("rememberedPassword", password); // Save password
+        localStorage.setItem("rememberedPassword", password);
       } else {
         localStorage.removeItem("rememberedEmail");
-        localStorage.removeItem("rememberedPassword"); // Remove password
+        localStorage.removeItem("rememberedPassword");
       }
-
-      navigate("/home"); // Redirect to home page after successful login
+      navigate("/home");
     } catch (error) {
-      setError(error.message); // Display error message
+      setError(error.message);
       console.error(error);
     }
   };
@@ -55,7 +51,10 @@ const Login = () => {
     setIsDarkMode(!isDarkMode);
   };
 
-  // Fetch background image and caption from TMDB API
+  const handleMoveForm = (position) => {
+    setFormPosition(position);
+  };
+
   useEffect(() => {
     const fetchBackground = async () => {
       try {
@@ -66,9 +65,7 @@ const Login = () => {
         const randomMovie =
           data.results[Math.floor(Math.random() * data.results.length)];
         const imageUrl = `https://image.tmdb.org/t/p/original${randomMovie.backdrop_path}`;
-        const movieCaption = `${randomMovie.title || randomMovie.name}: ${
-          randomMovie.overview || "No description available."
-        }`;
+        const movieCaption = `🎬 ${randomMovie.title || randomMovie.name}: ${(randomMovie.overview || "No description available.").slice(0, 100)}...`;
         setBackgroundImage(imageUrl);
         setCaption(movieCaption);
       } catch (error) {
@@ -77,12 +74,10 @@ const Login = () => {
     };
 
     fetchBackground();
-
     const interval = setInterval(() => {
       fetchBackground();
-    }, 10000); // Change every 10 seconds
-
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -97,8 +92,19 @@ const Login = () => {
       <div className="dark-mode-toggle" onClick={toggleDarkMode}>
         {isDarkMode ? <FaSun size={24} /> : <FaMoon size={24} />}
       </div>
-      <div className="form-wrapper">
-        <h1 className="login-title">Login</h1>
+
+      <div className={`form-wrapper ${formPosition}`}>
+        <div className="movie-header">
+          <FaFilm className="icon" /> <h1 className="login-title">CineVerse Login</h1> <FaStar className="icon" />
+        </div>
+
+        <div className="user-icon"><FaUserCircle size={40} /></div>
+
+        <div className="cinema-intro">
+          <FaTicketAlt className="icon bouncing" />
+          <p>Stream your favorite movies, series, anime & more!</p>
+        </div>
+
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleLogin} className="login-form">
           <input
@@ -130,12 +136,18 @@ const Login = () => {
             Login
           </button>
         </form>
+        <div className="form-buttons">
+          <button onClick={() => handleMoveForm("left")} className="move-button">Left</button>
+          <button onClick={() => handleMoveForm("default")} className="move-button">Default</button>
+          <button onClick={() => handleMoveForm("right")} className="move-button">Right</button>
+        </div>
         <p className="signup-link">
           Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>
       </div>
-      <div className="caption">
-        <h2>{caption}</h2>
+
+      <div className="caption small-caption">
+        {caption}
       </div>
     </div>
   );
