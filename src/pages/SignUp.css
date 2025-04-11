@@ -171,3 +171,49 @@
     transform: translateX(0);
   }
 }
+
+/* Responsive styles for phone screens */
+@media (max-width: 768px) {
+  .signup-container {
+    padding: 20px;
+  }
+
+  .form-wrapper {
+    width: 100%;
+    padding: 20px;
+    box-shadow: none;
+  }
+
+  .signup-form {
+    width: 100%;
+  }
+
+  .signup-input {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .signup-button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .form-buttons .move-button {
+    font-size: 12px;
+    padding: 8px 15px;
+  }
+
+  .caption {
+    font-size: 10px;
+    max-width: 90%;
+    padding: 8px 10px;
+  }
+
+  .already-have-account {
+    font-size: 12px;
+  }
+
+  .error-message {
+    font-size: 12px;
+  }
+}
