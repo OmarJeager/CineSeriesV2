@@ -401,6 +401,12 @@
   
   /* Responsive styles */
   @media (max-width: 768px) {
+    .form-wrapper.left,
+    .form-wrapper.right,
+    .form-wrapper.default {
+      display: none; /* Hide the buttons on phone screens */
+    }
+
     .form-wrapper {
       width: 90%;
       padding: 20px;
