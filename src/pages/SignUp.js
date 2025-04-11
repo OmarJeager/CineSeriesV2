@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate, Link } from "react-router-dom";
 import { FaMoon, FaSun } from "react-icons/fa";
@@ -26,6 +26,25 @@ const SignUp = () => {
       navigate("/home"); // Redirect to home page after signup
     } catch (error) {
       console.error(error.message);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Google Sign-In successful:", user);
+      navigate("/home"); // Redirect to home page after successful sign-up
+    } catch (error) {
+      console.error("Error during Google Sign-In:", error);
+      if (error.code === "auth/popup-closed-by-user") {
+        console.error("The popup was closed before completing the sign-in.");
+      } else if (error.code === "auth/cancelled-popup-request") {
+        console.error("Popup request was canceled.");
+      } else {
+        console.error("Unexpected error:", error.message);
+      }
     }
   };
 
@@ -116,6 +135,9 @@ const SignUp = () => {
             Sign Up
           </button>
         </form>
+        <button onClick={handleGoogleSignUp} className="google-signup-button">
+          Sign Up with Google
+        </button>
         <p className="already-have-account">
           You already have an account? <Link to="/login">Log In</Link>
         </p>

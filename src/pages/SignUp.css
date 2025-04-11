@@ -147,6 +147,22 @@
   animation: fadeIn 1.5s ease-in-out;
 }
 
+/* Google Signup Button */
+.google-signup-button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.google-signup-button:hover {
+  background-color: #357ae8;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {

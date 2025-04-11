@@ -98,32 +98,46 @@
 .profile-section {
   position: relative;
   cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.profile-section:hover {
+  transform: scale(1.1);
+  color: var(--primary-color);
 }
 
 .profile-dropdown {
   position: absolute;
-  right: 0;
   top: 100%;
-  background-color: var(--light-color);
-  color: var(--dark-color);
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
   padding: 1rem;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  animation: fadeInSlideDown 0.5s ease-in-out;
+  z-index: 10;
   min-width: 200px;
 }
 
 .profile-dropdown p {
   margin-bottom: 0.5rem;
+  font-size: 14px;
 }
 
 .profile-dropdown button {
   background-color: var(--primary-color);
-  color: var(--light-color);
+  color: white;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 3px;
+  border-radius: 5px;
   cursor: pointer;
-  width: 100%;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.profile-dropdown button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 .main-content {
@@ -333,6 +347,17 @@
 }
 
 @keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInSlideDown {
   from {
     opacity: 0;
     transform: translateY(-10px);
