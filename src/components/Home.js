@@ -658,7 +658,7 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
                       />
                       {/* Add Watchlist Icon */}
                       <button
-                        className={`watchlist-icon ${isInWatchlist(tv) ? "in-watchlist" : ""}`}
+                        className={`<watchlist>-icon ${isInWatchlist(tv) ? "in-watchlist" : ""}`}
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent navigation
                           addToWatchlist(tv);

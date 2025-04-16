@@ -107,6 +107,7 @@ const SignUp = () => {
         {isDarkMode ? <FaSun size={24} /> : <FaMoon size={24} />}
       </div>
 
+      {/* Wrap form and buttons in a single container */}
       <div className={`form-wrapper ${formPosition}`}>
         <h1>Sign Up</h1>
         <form onSubmit={handleSignUp} className="signup-form">
@@ -141,12 +142,19 @@ const SignUp = () => {
         <p className="already-have-account">
           You already have an account? <Link to="/login">Log In</Link>
         </p>
-      </div>
 
-      <div className="form-buttons">
-        <button onClick={() => handleMoveForm("left")} className="move-button">Left</button>
-        <button onClick={() => handleMoveForm("default")} className="move-button">Default</button>
-        <button onClick={() => handleMoveForm("right")} className="move-button">Right</button>
+        {/* Buttons for moving the form */}
+        <div className="form-buttons">
+          <button onClick={() => handleMoveForm("left")} className="move-button">
+            Left
+          </button>
+          <button onClick={() => handleMoveForm("default")} className="move-button">
+            Default
+          </button>
+          <button onClick={() => handleMoveForm("right")} className="move-button">
+            Right
+          </button>
+        </div>
       </div>
 
       <div className="caption small-caption">

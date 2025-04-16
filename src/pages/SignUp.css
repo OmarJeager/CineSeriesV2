@@ -22,6 +22,20 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   animation: slideIn 1s ease-in-out; /* Form animation */
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  transition: transform 0.5s ease;
+}
+
+.form-wrapper.left {
+  transform: translateX(-100%);
+}
+
+.form-wrapper.default {
+  transform: translateX(0);
+}
+
+.form-wrapper.right {
+  transform: translateX(100%);
 }
 
 .signup-container.dark-mode .form-wrapper {
@@ -72,6 +86,13 @@
   transform: scale(1.05);
 }
 
+.form-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
 .form-buttons .move-button {
   padding: 10px 20px;
   font-size: 14px;
@@ -86,6 +107,20 @@
 .form-buttons .move-button:hover {
   background-color: #0056b3;
   transform: scale(1.1);
+}
+
+.move-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.move-button:hover {
+  background-color: #0056b3;
 }
 
 .dark-mode-toggle {

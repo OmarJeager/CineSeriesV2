@@ -128,7 +128,7 @@ const Login = () => {
               type="checkbox"
               id="rememberMe"
               checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
+              onChange={(e) => setRememberMe(e.target.checked)} 
             />
             <label htmlFor="rememberMe">Remember Me</label>
           </div>
