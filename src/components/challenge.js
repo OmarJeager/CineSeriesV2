@@ -63,7 +63,7 @@ const Challenge = () => {
         { question: "Which popular TV show was based on a book series written by George R. R. Martin?", options: ["Game of Thrones", "Vikings", "The Witcher", "Spartacus"], answer: "Game of Thrones" }
     ];
 
-    const categories = {
+    const [categories, setCategories] = useState({
         movies: movieQuestions,
         series: seriesQuestions,
         people: [
@@ -147,7 +147,7 @@ const Challenge = () => {
             { question: "What is the name of the main character in 'Black Clover'?", options: ["Asta", "Yuno", "Noelle", "Yami"], answer: "Asta" },
             { question: "Which anime features a character named 'Shinji Ikari'?", options: ["Neon Genesis Evangelion", "Code Geass", "Steins;Gate", "Gurren Lagann"], answer: "Neon Genesis Evangelion" }
         ]
-    };
+    });
 
     const fetchQuestions = (selectedCategory) => {
         setQuestions(categories[selectedCategory] || []);
@@ -166,7 +166,10 @@ const Challenge = () => {
     const handleAddQuestion = () => {
         const { category, question, options, answer } = newQuestion;
         if (category && question && options.every((opt) => opt) && answer) {
-            categories[category].push({ question, options, answer });
+            setCategories((prevCategories) => ({
+                ...prevCategories,
+                [category]: [...prevCategories[category], { question, options, answer }],
+            }));
             alert("Question added successfully!");
             setNewQuestion({ question: "", options: ["", "", "", ""], answer: "", category: "" });
         } else {
