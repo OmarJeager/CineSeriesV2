@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSpring, animated } from "@react-spring/web"; // Import react-spring for animations
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./Challenge.css"; // Add a CSS file for styling
 
 const Challenge = () => {
@@ -177,10 +179,24 @@ const Challenge = () => {
                 ...prevCategories,
                 [category]: [...prevCategories[category], { question, options, answer }],
             }));
-            alert("Question added successfully!");
+            toast.success("Question added successfully!", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
             setNewQuestion({ question: "", options: ["", "", "", ""], answer: "", category: "" });
         } else {
-            alert("Please fill out all fields.");
+            toast.error("Please fill out all fields.", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         }
     };
 
@@ -192,6 +208,7 @@ const Challenge = () => {
 
     return (
         <div className="quiz-container">
+            <ToastContainer />
             {!category ? (
                 <animated.div style={inputAnimation} className="category-selection">
                     <h2>Select a Category</h2>
