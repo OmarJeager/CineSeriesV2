@@ -861,3 +861,14 @@
   color: #ffaa00;
   transform: scale(1.2);
 }
+
+.dashboard-chat-container {
+  text-align: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.dashboard-chat-container h1 {
+  color: #ff0000; /* Red for error messages */
+}

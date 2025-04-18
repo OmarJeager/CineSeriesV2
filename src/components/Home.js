@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle, FaStar, FaGamepad } from "react-icons/fa";
+import { FaUserCircle, FaSearch, FaBookmark, FaPlusCircle, FaStar, FaGamepad, FaComments } from "react-icons/fa";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "./Home.css";
 import StarRating from "./StarRating";
@@ -342,6 +342,11 @@ const Home = ({ watchlist, setWatchlist, addToList, setAddToList }) => {
 
           <div className="challenge-icon" onClick={() => navigate("/challenge")}>
             <FaGamepad size={28} title="Challenge" />
+          </div>
+
+          {/* Chat Icon */}
+          <div className="chat-icon" onClick={() => navigate("/dashboard/chat")}>
+            <FaComments size={28} title="Chat" />
           </div>
 
           <div className="profile-section" onClick={() => setShowProfile(!showProfile)}>

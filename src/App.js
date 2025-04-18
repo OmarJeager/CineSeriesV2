@@ -12,6 +12,7 @@ import AddToList from "./components/AddToList"; // AddToList component
 import AddToListPage from "./components/AddToList"; // Import the new page
 import Challenge from "./components/challenge"; // Import Challenge component
 import { ToastContainer } from "react-toastify";
+import DashboardChat from "./components/DashboardChat"; // Import DashboardChat component
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -50,6 +51,7 @@ function App() {
       <ToastContainer />
       <Router>
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
 
@@ -90,6 +92,9 @@ function App() {
 
           {/* Challenge route */}
           <Route path="/challenge" element={<Challenge />} />
+
+          {/* Dashboard Chat route */}
+          <Route path="/dashboard/chat" element={<DashboardChat />} />
 
           {/* Redirect if the user is not authenticated */}
           <Route
