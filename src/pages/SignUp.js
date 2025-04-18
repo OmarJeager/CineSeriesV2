@@ -17,6 +17,9 @@ const SignUp = () => {
   const [backgroundImage, setBackgroundImage] = useState("");
   const [caption, setCaption] = useState("");
   const [formPosition, setFormPosition] = useState("default");
+  const [isFading, setIsFading] = useState(false); // State to handle fade animations
+  const [isFadingOut, setIsFadingOut] = useState(false); // State to handle fade-out animation
+  const [isCaptionExpanded, setIsCaptionExpanded] = useState(false); // State to toggle caption expansion
   const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
@@ -56,6 +59,10 @@ const SignUp = () => {
     setFormPosition(position);
   };
 
+  const toggleCaption = () => {
+    setIsCaptionExpanded(!isCaptionExpanded);
+  };
+
   const fetchBackground = async () => {
     if (!navigator.onLine) {
       console.error("No internet connection.");
@@ -64,20 +71,41 @@ const SignUp = () => {
       document.body.style.backgroundColor = "#f5f5f5"; // Fallback background color
       return;
     }
+
+    const categories = [
+      { type: "movie", url: `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}` },
+      { type: "tv", url: `https://api.themoviedb.org/3/trending/tv/day?api_key=${API_KEY}` },
+      { type: "anime", url: `https://api.jikan.moe/v4/top/anime` }, // Example anime API
+    ];
+
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}`
-      );
+      const response = await fetch(randomCategory.url);
       if (!response.ok) {
         throw new Error("Failed to fetch background image");
       }
+
       const data = await response.json();
-      const randomMovie =
-        data.results[Math.floor(Math.random() * data.results.length)];
-      const imageUrl = `https://image.tmdb.org/t/p/original${randomMovie.backdrop_path}`;
-      const movieCaption = `🎬 ${randomMovie.title || randomMovie.name}: ${(randomMovie.overview || "No description available.").slice(0, 100)}...`;
-      setBackgroundImage(imageUrl);
-      setCaption(movieCaption);
+      let randomItem, imageUrl, captionText;
+
+      if (randomCategory.type === "anime") {
+        randomItem = data.data[Math.floor(Math.random() * data.data.length)];
+        imageUrl = randomItem.images.jpg.large_image_url;
+        captionText = `🎥 ${randomItem.title}: ${(randomItem.synopsis || "No description available.").slice(0, 100)}...`;
+      } else {
+        randomItem = data.results[Math.floor(Math.random() * data.results.length)];
+        imageUrl = `https://image.tmdb.org/t/p/original${randomItem.backdrop_path}`;
+        captionText = `🎬 ${randomItem.title || randomItem.name}: ${(randomItem.overview || "No description available.").slice(0, 100)}...`;
+      }
+
+      // Trigger fade-out animation
+      setIsFadingOut(true);
+      setTimeout(() => {
+        setBackgroundImage(imageUrl); // Update the background image
+        setCaption(captionText); // Update the caption
+        setIsFadingOut(false); // Trigger fade-in animation
+      }, 500); // Match this duration with the CSS fade-out animation
     } catch (error) {
       console.error("Error fetching background image:", error);
       setBackgroundImage(""); // Reset background image
@@ -96,11 +124,9 @@ const SignUp = () => {
 
   return (
     <div
-      className={`signup-container ${isDarkMode ? "dark-mode" : ""}`}
+      className={`signup-container ${isDarkMode ? "dark-mode" : ""} ${isFadingOut ? "fading-out" : "fading-in"}`}
       style={{
         backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
       }}
     >
       <div className="dark-mode-toggle" onClick={toggleDarkMode}>
@@ -158,7 +184,16 @@ const SignUp = () => {
       </div>
 
       <div className="caption small-caption">
-        {caption}
+        {isCaptionExpanded ? caption : `${caption.slice(0, 100)}`}
+        {caption.length > 100 && (
+          <span
+            className="read-more"
+            onClick={toggleCaption}
+            style={{ color: "blue", cursor: "pointer", marginLeft: "10px" }} // Adjusted margin for spacing
+          >
+            {isCaptionExpanded ? "Read Less" : "Read More"}
+          </span>
+        )}
       </div>
     </div>
   );
