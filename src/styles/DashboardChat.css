@@ -1,0 +1,122 @@
+/* Container styles */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Button to create group */
+  .create-group-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .create-group-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Form container styles */
+  .form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  /* Input and Textarea styles */
+  .input, .textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .textarea {
+    min-height: 100px;
+  }
+  
+  /* Submit button */
+  .submit-button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .submit-button:hover {
+    background-color: #218838;
+  }
+  
+  /* Group List styling */
+  .group-list {
+    margin-top: 20px;
+  }
+  
+  .group-card {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .group-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+  }
+  
+  .group-card small {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #888;
+  }
+  
+  /* Group Actions styling */
+  .group-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .details-icon, .chat-icon {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .group-details {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Toast Notification Styling */
+  .Toastify__toast--success {
+    background-color: #28a745;
+  }
+  
+  .Toastify__toast--error {
+    background-color: #dc3545;
+  }
+  
+  .Toastify__toast {
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+  }
